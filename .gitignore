@@ -1,0 +1,4 @@
+client/node_modules
+server/node_modules
+ideas.txt
+./server/connect.js

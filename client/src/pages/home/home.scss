@@ -1,0 +1,23 @@
+.home {
+  margin-left: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 1;
+  color: var(--textColor);
+  min-height: 100vh;
+}
+
+@media (max-width: 80rem), (max-height: 32rem) {
+  .home {
+    margin-left: 0;
+    align-items: center;
+    margin-bottom: 4rem;
+  }
+}
+
+// @media (min-width: 12rem) {
+//   .home {
+//     margin: 0;
+//   }
+// }

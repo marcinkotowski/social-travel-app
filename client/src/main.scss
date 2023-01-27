@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap");
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Raleway", sans-serif;
+  // font-family: "Manrope", sans-serif;
+  // font-family: "Quicksand", sans-serif;
+  font-feature-settings: "lnum" 1;
+  min-width: fit-content;
+  height: 100%;
+  width: 100%;
+
+  // .App {
+  //   min-height: 100vh;
+  // }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  --primaryColor: #f7a100;
+  // --primaryColor: #9d00ff;
+
+  #light {
+    --textColor: black;
+    --bg: #f4f4f4;
+    // --bg: #f0f0f0;
+    --postColor: white;
+    --logoColor: #b6b6b6;
+    --bgLogo: #131519;
+    --bgSidebar: #22242c;
+    --bgRightbar: #e9e9e9;
+    --bgLocation: #e9e9e9;
+    --bgPostHover: #f5f5f5;
+    background-color: var(--bg);
+
+    transition: 200ms;
+  }
+
+  #dark {
+    --textColor: whitesmoke;
+    --bg: #131519;
+    --logoColor: #b6b6b6;
+    --bgLogo: #131519;
+    --postColor: #1d1f26;
+    --postColor: #22242c;
+    --postColor: #1b1d23;
+    --bgRightbar: #1b1d23;
+    --bgLocation: #131519;
+    --bgLocation: #16181d;
+    --bgPostHover: #22242c;
+    background-color: var(--bg);
+    transition: 200ms;
+  }
+}

@@ -1,0 +1,238 @@
+// @import "~leaflet/dist/leaflet.css";
+
+.background-profile {
+  margin-left: 5rem;
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  color: var(--textColor);
+  min-height: 100vh;
+
+  .profile {
+    // width: fit-content;
+    margin: 2rem 0;
+    // max-width: 30rem;
+    width: 30rem;
+
+    .user-information {
+      gap: 1.2rem;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      border-radius: 10px;
+      border: 1px solid var(--bgRightbar);
+      background-color: var(--postColor);
+      height: 48.5rem;
+      // .map {
+      //   height: 27.6rem;
+      .leaflet-container {
+        position: relative;
+        height: 27.6rem;
+        width: 100%;
+        border-radius: 10px;
+        margin: 0 auto;
+
+        // img {
+        //   width: 100%;
+        //   height: 100%;
+        //   object-fit: cover;
+        //   border-radius: 10px;
+        // }
+        // .leaflet-control-zoom {
+        //   display: none;
+        // }
+      }
+
+      .leaflet-control {
+        z-index: 0 !important;
+      }
+      .leaflet-pane {
+        z-index: 0 !important;
+      }
+      .leaflet-top,
+      .leaflet-bottom {
+        z-index: 0 !important;
+        top: 0;
+        height: fit-content;
+        font-size: 10px;
+      }
+
+      .leaflet-control-zoom {
+        display: none;
+      }
+
+      // }
+
+      .user-details {
+        height: 27.6rem;
+        width: 27.6rem;
+        margin-top: -7.2rem;
+        position: absolute;
+
+        .top {
+          z-index: 2;
+          //
+          display: flex;
+          justify-content: center;
+
+          .user-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.2rem;
+            border-radius: 50%;
+            background-color: var(--postColor);
+
+            img {
+              width: 12rem;
+              height: 12rem;
+              border-radius: 50%;
+              object-fit: cover;
+            }
+          }
+        }
+
+        .bottom {
+          // height: 50%;
+          height: 13.2rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-evenly;
+          align-items: center;
+
+          .names {
+            // margin-top: 1.2rem;
+            // display: grid;
+            text-align: center;
+
+            display: flex;
+            flex-direction: column;
+            // czy ustawic całą dostępną nazwę czy ...
+            .full-name {
+              margin: 0;
+              color: var(--textColor);
+              font-size: 1.6rem;
+              // word-break: break-all;
+              // text-overflow: ellipsis;
+              // overflow: hidden;
+              // white-space: nowrap;
+            }
+
+            .username {
+              margin: 0;
+              color: #838383;
+              font-size: 1rem;
+              // text-overflow: ellipsis;
+              // overflow: hidden;
+              // white-space: nowrap;
+            }
+          }
+
+          .statistics {
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            color: var(--textColor);
+            font-size: 1rem;
+
+            span {
+              font-weight: 600;
+            }
+
+            .follow-information {
+              gap: 1rem;
+              display: flex;
+              flex-direction: row;
+              margin-bottom: 0.6rem;
+              flex-wrap: wrap;
+
+              .followers {
+                margin: 0;
+              }
+
+              .following {
+                margin: 0;
+              }
+            }
+
+            .journeys {
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: 2px;
+
+              p {
+                margin: 0;
+              }
+            }
+          }
+
+          .action {
+            margin-top: 1.2rem;
+            // height: 100%;
+            // display: flex;
+            // justify-content: center;
+            // align-items: center;
+            button {
+              color: white;
+              background-color: var(--primaryColor);
+              padding: 8px 30px;
+              font-size: 1rem;
+              font-weight: bold;
+              border-radius: 20px;
+              border: none;
+            }
+          }
+        }
+      }
+    }
+
+    .type-post {
+      display: flex;
+      height: 2.4rem;
+      color: var(--textColor);
+      width: 100%;
+      //nowy kolor to ja
+      background-color: var(--bgLocation);
+
+      //teraz
+      // background-color: var(--postColor);
+      border-radius: 10px;
+      margin-bottom: 1.2rem;
+
+      p {
+        flex: 1;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        cursor: pointer;
+
+        //teraz
+        // background-color: var(--postColor);
+      }
+
+      .active {
+        background-color: var(--postColor);
+      }
+    }
+  }
+
+  .archives {
+    // height: fit-content;
+    width: fit-content;
+
+    .posts {
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 80rem), (max-height: 32rem) {
+  .background-profile {
+    margin-left: 0;
+    justify-content: center;
+    margin-bottom: 4rem;
+  }
+}

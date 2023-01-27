@@ -1,0 +1,130 @@
+// @import "leaflet/dist/leaflet.css";
+
+.post {
+  // display: flex;
+  // flex-direction: column;
+  // float: left;
+
+  width: 27.6rem;
+  padding: 1.2rem;
+  height: fit-content;
+  border-radius: 10px;
+  border: 1px solid var(--bgRightbar);
+  background-color: var(--postColor);
+  .content {
+    .headline {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      .user {
+        display: flex;
+        align-items: center;
+        height: 3rem;
+        width: 100%;
+        gap: 1rem;
+
+        .user-avatar {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+        }
+
+        .information {
+          width: 100%;
+          // height: 100%;
+          display: grid;
+          align-items: center;
+
+          .username {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            color: var(--textColor);
+          }
+
+          .timestamp {
+            margin: 0;
+            font-size: 0.7rem;
+            color: #f7a100;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+        }
+      }
+
+      .location {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        min-width: 3rem;
+        height: 3rem;
+        background-color: var(--bgLocation);
+        border-radius: 50%;
+
+        img {
+          width: 2rem;
+          height: 2rem;
+          border-radius: 50%;
+          object-fit: fill;
+        }
+      }
+    }
+
+    .description {
+      // font-size: 0.9rem;
+      margin-bottom: 1.2rem;
+      p {
+        margin: 0;
+        line-height: 1.3rem;
+        color: var(--textColor);
+        word-wrap: break-word;
+        // font-weight: 400;
+      }
+    }
+
+    .images {
+      margin-bottom: 0.6rem;
+      img {
+        width: 100%;
+        border-radius: 5px;
+      }
+    }
+
+    .actions-container {
+      display: flex;
+      font-size: 0.9rem;
+      gap: 30px;
+
+      .action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        color: var(--textColor);
+
+        p {
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 30rem) {
+  .post {
+    width: 100vw;
+  }
+}

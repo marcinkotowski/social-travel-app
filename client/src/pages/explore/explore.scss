@@ -1,0 +1,16 @@
+.explore {
+  margin-left: 5rem;
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  color: var(--textColor);
+
+  .posts-container {
+    display: flex;
+    flex-direction: column;
+    // margin-right: 2rem;
+
+    gap: 50px;
+    // width: 55%;
+  }
+}
