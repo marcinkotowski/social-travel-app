@@ -145,6 +145,7 @@
 
       img {
         width: 50%;
+        border-radius: 5px;
       }
 
       svg {
@@ -159,6 +160,21 @@
         span:hover {
           color: var(--primaryColor);
           cursor: pointer;
+        }
+      }
+
+      span:hover {
+        color: var(--primaryColor);
+        cursor: pointer;
+      }
+
+      label {
+        p {
+          span {
+            svg {
+              margin: 0.7rem;
+            }
+          }
         }
       }
     }

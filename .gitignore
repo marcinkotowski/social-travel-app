@@ -2,3 +2,5 @@ client/node_modules
 server/node_modules
 ideas.txt
 ./server/connect.js
+client/public/upload
+client/src/assets

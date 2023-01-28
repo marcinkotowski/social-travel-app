@@ -7,6 +7,8 @@ import {
   MdAddLocationAlt,
   MdOutlineInsertPhoto,
   MdOpenInNew,
+  MdDelete,
+  MdEdit,
 } from "react-icons/md";
 import { useState } from "react";
 import debounce from "lodash/debounce";
@@ -15,6 +17,7 @@ import { makeRequest } from "../../axios";
 import MoonLoader from "react-spinners/MoonLoader";
 import { dataSzczecin } from "../../assets/data";
 import { useMutation, useQueryClient } from "react-query";
+import { BiEditAlt } from "react-icons/bi";
 
 const Create = () => {
   const [addLocation, setAddLocation] = useState(false);
@@ -243,19 +246,23 @@ const Create = () => {
           )}
         </div>
         <div className="add-photos">
-          <MdOutlineInsertPhoto />
+          {!file && <MdOutlineInsertPhoto />}
           <input
             type="file"
             id="file"
             style={{ display: "none" }}
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={(e) => {
+              setFile(e.target.files[0]);
+              e.target.value = null;
+            }}
           />
           {file && <img src={URL.createObjectURL(file)} />}
           <label htmlFor="file">
             <p>
-              <span>{file ? "Change" : "Add Media"} </span>
+              <span>{file ? <MdEdit /> : "Add Media"}</span>
             </p>
           </label>
+          <span>{file && <MdDelete onClick={() => setFile(null)} />}</span>
           <button onClick={handleClick}>Publish</button>
         </div>
 
