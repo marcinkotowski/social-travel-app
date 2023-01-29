@@ -17,7 +17,6 @@ import { makeRequest } from "../../axios";
 import MoonLoader from "react-spinners/MoonLoader";
 import { dataSzczecin } from "../../assets/data";
 import { useMutation, useQueryClient } from "react-query";
-import { BiEditAlt } from "react-icons/bi";
 
 const Create = () => {
   const [addLocation, setAddLocation] = useState(false);
@@ -44,6 +43,7 @@ const Create = () => {
       },
     }
   );
+
   const upload = async () => {
     try {
       const formData = new FormData();

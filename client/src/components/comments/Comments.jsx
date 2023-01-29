@@ -1,16 +1,16 @@
 import React, { useContext, useState } from "react";
 import "./comments.scss";
 import { AuthContext } from "../../context/authContext";
-
 import TextareaAutosize from "react-textarea-autosize";
 import { Link } from "react-router-dom";
-
-import { useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { makeRequest } from "../../axios.js";
 import MoonLoader from "react-spinners/MoonLoader";
 import moment from "moment";
 
 const Comments = ({ postId }) => {
+  const [desc, setDesc] = useState("");
+
   const { currentUser } = useContext(AuthContext);
 
   const { isLoading, error, data } = useQuery("comments", () =>
@@ -19,14 +19,36 @@ const Comments = ({ postId }) => {
     })
   );
 
-  console.log(data);
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    (newComment) => {
+      return makeRequest.post("/comments", newComment);
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries("comments");
+      },
+    }
+  );
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+    mutation.mutate({ desc, postId });
+    console.log(desc);
+  };
 
   return (
     <div className="comments">
       <div className="write">
         <img src={currentUser.profilePic} alt="" />
-        <TextareaAutosize placeholder="Write a comment..." />
-        <button>Send</button>
+        <TextareaAutosize
+          placeholder="Write a comment..."
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
+        <button onClick={handleClick}>Send</button>
       </div>
       {isLoading ? (
         <MoonLoader loading={isLoading} />
