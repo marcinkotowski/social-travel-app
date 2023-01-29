@@ -53,8 +53,8 @@ const Comments = ({ postId }) => {
       {isLoading ? (
         <MoonLoader loading={isLoading} />
       ) : (
-        data.map((comment) => (
-          <div className="comment">
+        data.map((comment, key) => (
+          <div className="comment" key={key}>
             <img src={comment.profilePic} alt="" />
             <div className="content">
               <div className="information">

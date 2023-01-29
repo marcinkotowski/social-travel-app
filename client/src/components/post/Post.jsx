@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 
 import "./post.scss";
@@ -21,8 +21,40 @@ import Comments from "../comments/Comments";
 import { useState } from "react";
 import moment from "moment";
 
+import ReactCanvasConfetti from "react-canvas-confetti";
+
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { makeRequest } from "../../axios.js";
+import { AuthContext } from "../../context/authContext";
+
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
+
+  const { currentUser } = useContext(AuthContext);
+  const queryClient = useQueryClient();
+
+  const { isLoading, error, data } = useQuery(["likes", post.id], () =>
+    makeRequest.get("/likes/?postId=" + post.id).then((res) => {
+      return res.data;
+    })
+  );
+
+  const mutation = useMutation(
+    (liked) => {
+      if (liked) return makeRequest.delete("/likes?postId=" + post.id);
+      return makeRequest.post("/likes", { postId: post.id });
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries("likes");
+      },
+    }
+  );
+
+  const handleLike = () => {
+    mutation.mutate(data?.includes(currentUser.id));
+  };
 
   return (
     <div className="post">
@@ -54,9 +86,13 @@ const Post = ({ post }) => {
           </div>
         )}
         <div className="actions-container">
-          <div className="action">
-            <MdFavoriteBorder />
-            <p>0</p>
+          <div className="action" onClick={handleLike}>
+            {data?.includes(currentUser.id) ? (
+              <MdFavorite />
+            ) : (
+              <MdFavoriteBorder />
+            )}
+            <p>{data?.length}</p>
           </div>
           <div className="action" onClick={() => setCommentOpen(!commentOpen)}>
             <MdOutlineComment />
