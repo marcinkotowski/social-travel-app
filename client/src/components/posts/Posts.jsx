@@ -6,16 +6,11 @@ import { makeRequest } from "../../axios.js";
 import MoonLoader from "react-spinners/MoonLoader";
 
 const Posts = ({ userId }) => {
-  const { isLoading, error, data } = useQuery("posts", () => {
-    if (userId) {
-      return makeRequest.get("/posts/" + userId).then((res) => {
-        return res.data;
-      });
-    } else
-      return makeRequest.get("/posts").then((res) => {
-        return res.data;
-      });
-  });
+  const { isLoading, error, data } = useQuery("posts", () =>
+    makeRequest.get("/posts?userId=" + userId).then((res) => {
+      return res.data;
+    })
+  );
 
   return (
     <div className="posts">
