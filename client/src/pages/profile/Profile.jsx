@@ -26,6 +26,33 @@ const Profile = () => {
       return res.data;
     })
   );
+  const queryClient = useQueryClient();
+
+  const { isLoading: rIsLoading, data: relationshipData } = useQuery(
+    ["relationship"],
+    () =>
+      makeRequest.get("/relationships?followedUserId=" + userId).then((res) => {
+        return res.data;
+      })
+  );
+
+  const mutation = useMutation(
+    (following) => {
+      if (following)
+        return makeRequest.delete("/relationships?userId=" + userId);
+      return makeRequest.post("/relationships", { userId });
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries("relationship");
+      },
+    }
+  );
+
+  const handleFollow = () => {
+    mutation.mutate(relationshipData?.includes(currentUser.id));
+  };
 
   const myIcon = new Icon({
     iconUrl:
@@ -100,12 +127,21 @@ const Profile = () => {
                   </div>
                 </div>
                 <div className="action">
-                  {userId == currentUser.id ? (
+                  {rIsLoading ? (
+                    "Loading"
+                  ) : userId == currentUser.id ? (
                     <button style={{ backgroundColor: "gray" }}>
                       Settings
                     </button>
+                  ) : relationshipData.includes(currentUser.id) ? (
+                    <button
+                      style={{ backgroundColor: "gray" }}
+                      onClick={handleFollow}
+                    >
+                      Following
+                    </button>
                   ) : (
-                    <button>Follow</button>
+                    <button onClick={handleFollow}>Follow</button>
                   )}
                 </div>
               </div>
