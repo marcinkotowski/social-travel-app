@@ -8,12 +8,17 @@
     align-items: center;
     gap: 20px;
     margin-top: 1.2rem;
-    img {
-      align-self: flex-start;
+
+    a {
       min-width: 2.5rem;
       height: 2.5em;
-      border-radius: 50%;
-      object-fit: cover;
+      img {
+        align-self: flex-start;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
     }
 
     textarea {
@@ -70,12 +75,18 @@
     align-items: flex-start;
     gap: 20px;
 
-    img {
+    a {
       min-width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 50%;
-      object-fit: cover;
+      height: 2.5em;
+      img {
+        align-self: flex-start;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
     }
+
     .content {
       margin: 0;
       width: 100%;

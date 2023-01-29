@@ -68,10 +68,12 @@ const Sidebar = () => {
         </div>
         <div className="bottom">
           {currentUser ? (
-            <div className="user">
-              <img src={currentUser.profilePic} alt="" />
-              <span>{currentUser.name}</span>
-            </div>
+            <Link to={`/profile/${currentUser.id}`}>
+              <div className="user">
+                <img src={currentUser.profilePic} alt="" />
+                <span>{currentUser.name}</span>
+              </div>
+            </Link>
           ) : (
             <div className="icon">
               <FaRegUserCircle />

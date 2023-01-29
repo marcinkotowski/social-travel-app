@@ -21,11 +21,10 @@ import Comments from "../comments/Comments";
 import { useState } from "react";
 import moment from "moment";
 
-import ReactCanvasConfetti from "react-canvas-confetti";
-
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import { makeRequest } from "../../axios.js";
 import { AuthContext } from "../../context/authContext";
+import MoonLoader from "react-spinners/MoonLoader";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
@@ -82,26 +81,38 @@ const Post = ({ post }) => {
         </div>
         {post.img && (
           <div className="images">
-            <img src={"./upload/" + post.img} alt="" />
+            <img src={"/upload/" + post.img} alt="" />
           </div>
         )}
         <div className="actions-container">
-          <div className="action" onClick={handleLike}>
-            {data?.includes(currentUser.id) ? (
-              <MdFavorite />
-            ) : (
-              <MdFavoriteBorder />
-            )}
-            <p>{data?.length}</p>
-          </div>
-          <div className="action" onClick={() => setCommentOpen(!commentOpen)}>
-            <MdOutlineComment />
-            <p>1</p>
-          </div>
-          <div className="action">
-            <MdOutlineBookmarkBorder />
-            <p>Save</p>
-          </div>
+          {error ? (
+            <p className="error">Something went wrong</p>
+          ) : isLoading ? (
+            <MoonLoader loading={isLoading} speedMultiplier={0.7} size={30} />
+          ) : (
+            <>
+              {" "}
+              <div className="action" onClick={handleLike}>
+                {data.includes(currentUser.id) ? (
+                  <MdFavorite />
+                ) : (
+                  <MdFavoriteBorder />
+                )}
+                <p>{data.length}</p>
+              </div>
+              <div
+                className="action"
+                onClick={() => setCommentOpen(!commentOpen)}
+              >
+                <MdOutlineComment />
+                <p>1</p>
+              </div>
+              <div className="action">
+                <MdOutlineBookmarkBorder />
+                <p>Save</p>
+              </div>
+            </>
+          )}
         </div>
         {commentOpen && <Comments postId={post.id} />}
       </div>

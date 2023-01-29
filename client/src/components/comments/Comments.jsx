@@ -42,7 +42,9 @@ const Comments = ({ postId }) => {
   return (
     <div className="comments">
       <div className="write">
-        <img src={currentUser.profilePic} alt="" />
+        <Link to={`/profile/${currentUser.id}`}>
+          <img src={currentUser.profilePic} alt="" />
+        </Link>
         <TextareaAutosize
           placeholder="Write a comment..."
           value={desc}
@@ -55,12 +57,16 @@ const Comments = ({ postId }) => {
       ) : (
         data.map((comment, key) => (
           <div className="comment" key={key}>
-            <img src={comment.profilePic} alt="" />
+            <Link to={`/profile/${comment.userId}`}>
+              <img src={comment.profilePic} alt="" />
+            </Link>
             <div className="content">
               <div className="information">
                 <div className="container">
                   <p className="username">
-                    <Link>{comment.name}</Link>
+                    <Link to={`/profile/${comment.userId}`}>
+                      {comment.name}
+                    </Link>
                   </p>
                 </div>
                 <p className="timestamp">
