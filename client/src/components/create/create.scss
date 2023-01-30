@@ -14,9 +14,6 @@
 
     .write {
       width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
 
       img {
         align-self: flex-start;
@@ -26,19 +23,40 @@
         object-fit: cover;
       }
 
-      textarea {
+      .write-feature {
         width: 100%;
-        resize: none;
-        font-size: 1rem;
-        border: none;
-        background-color: transparent;
-        font-family: inherit;
-        color: inherit;
-        outline: none;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        textarea {
+          width: 100%;
+          resize: none;
+          font-size: 1rem;
+          border: none;
+          background-color: transparent;
+          font-family: inherit;
+          color: inherit;
+          outline: none;
+        }
+
+        textarea::-webkit-scrollbar {
+          display: none;
+        }
       }
 
-      textarea::-webkit-scrollbar {
-        display: none;
+      .write-error {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--primaryColor);
+        margin-left: 4rem;
+        font-size: 0.9rem;
+        p {
+          margin: 0;
+        }
+        svg {
+          min-width: 1rem;
+        }
       }
     }
 

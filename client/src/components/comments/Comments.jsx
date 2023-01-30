@@ -7,9 +7,24 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { makeRequest } from "../../axios.js";
 import MoonLoader from "react-spinners/MoonLoader";
 import moment from "moment";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { MdError } from "react-icons/md";
 
 const Comments = ({ postId }) => {
-  const desc = useRef(null);
+  const schema = yup.object().shape({
+    desc: yup.string("Comment must be string"),
+  });
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    register,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const { currentUser } = useContext(AuthContext);
 
@@ -33,20 +48,35 @@ const Comments = ({ postId }) => {
     }
   );
 
-  const handleClick = async (e) => {
-    e.preventDefault();
-    mutation.mutate({ desc: desc.current.value, postId });
-    desc.current.value = "";
+  const handleClick = async ({ desc }) => {
+    try {
+      mutation.mutate({ desc, postId });
+      reset({
+        desc: "",
+      });
+    } catch (err) {
+      setError("desc", { type: "custom", message: err.response.data });
+    }
   };
 
   return (
     <div className="comments">
       <div className="write">
-        <Link to={`/profile/${currentUser.id}`}>
-          <img src={currentUser.profilePic} alt="" />
-        </Link>
-        <TextareaAutosize placeholder="Write a comment..." ref={desc} />
-        <button onClick={handleClick}>Send</button>
+        <div className="write-feature">
+          <Link to={`/profile/${currentUser.id}`}>
+            <img src={currentUser.profilePic} alt="" />
+          </Link>
+          <TextareaAutosize
+            placeholder="Write a comment..."
+            {...register("desc")}
+          />
+          <button onClick={handleSubmit(handleClick)}>Send</button>
+        </div>
+        {errors.desc && (
+          <div className="write-error">
+            <MdError /> <p>{errors.desc.message}</p>
+          </div>
+        )}
       </div>
       {isLoading ? (
         <MoonLoader loading={isLoading} />

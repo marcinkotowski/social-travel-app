@@ -9,6 +9,7 @@ import {
   MdOpenInNew,
   MdDelete,
   MdEdit,
+  MdError,
 } from "react-icons/md";
 import { useState } from "react";
 import debounce from "lodash/debounce";
@@ -17,6 +18,9 @@ import { makeRequest } from "../../axios";
 import MoonLoader from "react-spinners/MoonLoader";
 import { dataSzczecin } from "../../assets/data";
 import { useMutation, useQueryClient } from "react-query";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const Create = () => {
   const [addLocation, setAddLocation] = useState(false);
@@ -26,7 +30,19 @@ const Create = () => {
   const [selectedlocation, setSelectedlocation] = useState("");
   const [anonymousLocation, setAnonymousLocation] = useState(false);
   const [file, setFile] = useState(null);
-  const desc = useRef(null);
+
+  const schema = yup.object().shape({
+    desc: yup.string("Description must be string"),
+  });
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    register,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const { currentUser } = useContext(AuthContext);
 
@@ -66,18 +82,23 @@ const Create = () => {
     handleSearch(value);
   };
 
-  const handleClick = async (e) => {
-    e.preventDefault();
-    let imgUrl = "";
-    if (file) imgUrl = await upload();
-    mutation.mutate({ desc: desc.current.value, img: imgUrl });
-    desc.current.value = "";
-    setFile(null);
-    setQuery("");
-    setData("");
-    setSelectedlocation("");
-    setAnonymousLocation(false);
-    setAddLocation(false);
+  const handleClick = async ({ desc }) => {
+    try {
+      let imgUrl = "";
+      if (file) imgUrl = await upload();
+      mutation.mutate({ desc, img: imgUrl });
+      reset({
+        desc: "",
+      });
+      setFile(null);
+      setQuery("");
+      setData("");
+      setSelectedlocation("");
+      setAnonymousLocation(false);
+      setAddLocation(false);
+    } catch (err) {
+      setError("desc", { type: "custom", message: err.response.data });
+    }
   };
 
   const handleSelectedLocation = (result) => {
@@ -159,8 +180,18 @@ const Create = () => {
     <div className="create">
       <div className="content">
         <div className="write">
-          <img src={currentUser.profilePic} alt="" />
-          <TextareaAutosize placeholder="That joruney was..." ref={desc} />
+          <div className="write-feature">
+            <img src={currentUser.profilePic} alt="" />
+            <TextareaAutosize
+              placeholder="That joruney was..."
+              {...register("desc")}
+            />
+          </div>
+          {errors.desc && (
+            <div className="write-error">
+              <MdError /> <p>{errors.desc.message}</p>
+            </div>
+          )}
         </div>
         <div className="add-location">
           <div className="add">
@@ -258,7 +289,7 @@ const Create = () => {
             </p>
           </label>
           <span>{file && <MdDelete onClick={() => setFile(null)} />}</span>
-          <button onClick={handleClick}>Publish</button>
+          <button onClick={handleSubmit(handleClick)}>Publish</button>
         </div>
 
         {/* <hr /> */}
