@@ -21,6 +21,8 @@ import { useMutation, useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Create = () => {
   const [addLocation, setAddLocation] = useState(false);
@@ -40,6 +42,7 @@ const Create = () => {
     formState: { errors },
     register,
     reset,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -181,7 +184,9 @@ const Create = () => {
       <div className="content">
         <div className="write">
           <div className="write-feature">
-            <img src={currentUser.profilePic} alt="" />
+            <Link to={`/profile/${currentUser.id}`}>
+              <img src={currentUser.profilePic} alt="" />
+            </Link>
             <TextareaAutosize
               placeholder="That joruney was..."
               {...register("desc")}
@@ -289,7 +294,9 @@ const Create = () => {
             </p>
           </label>
           <span>{file && <MdDelete onClick={() => setFile(null)} />}</span>
-          <button onClick={handleSubmit(handleClick)}>Publish</button>
+          <button onClick={handleSubmit(handleClick)} disabled={!watch("desc")}>
+            Publish
+          </button>
         </div>
 
         {/* <hr /> */}

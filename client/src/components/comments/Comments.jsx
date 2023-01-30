@@ -22,6 +22,7 @@ const Comments = ({ postId }) => {
     formState: { errors },
     register,
     reset,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -70,7 +71,9 @@ const Comments = ({ postId }) => {
             placeholder="Write a comment..."
             {...register("desc")}
           />
-          <button onClick={handleSubmit(handleClick)}>Send</button>
+          <button onClick={handleSubmit(handleClick)} disabled={!watch("desc")}>
+            Send
+          </button>
         </div>
         {errors.desc && (
           <div className="write-error">
