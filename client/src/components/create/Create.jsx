@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import TextareaAutosize from "react-textarea-autosize";
@@ -25,8 +25,8 @@ const Create = () => {
   const [data, setData] = useState("");
   const [selectedlocation, setSelectedlocation] = useState("");
   const [anonymousLocation, setAnonymousLocation] = useState(false);
-  const [desc, setDesc] = useState("");
   const [file, setFile] = useState(null);
+  const desc = useRef(null);
 
   const { currentUser } = useContext(AuthContext);
 
@@ -70,15 +70,14 @@ const Create = () => {
     e.preventDefault();
     let imgUrl = "";
     if (file) imgUrl = await upload();
-    mutation.mutate({ desc, img: imgUrl });
-    setDesc("");
+    mutation.mutate({ desc: desc.current.value, img: imgUrl });
+    desc.current.value = "";
     setFile(null);
     setQuery("");
     setData("");
     setSelectedlocation("");
     setAnonymousLocation(false);
     setAddLocation(false);
-    console.log(desc);
   };
 
   const handleSelectedLocation = (result) => {
@@ -161,11 +160,7 @@ const Create = () => {
       <div className="content">
         <div className="write">
           <img src={currentUser.profilePic} alt="" />
-          <TextareaAutosize
-            placeholder="That joruney was..."
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-          />
+          <TextareaAutosize placeholder="That joruney was..." ref={desc} />
         </div>
         <div className="add-location">
           <div className="add">

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import "./comments.scss";
 import { AuthContext } from "../../context/authContext";
 import TextareaAutosize from "react-textarea-autosize";
@@ -9,7 +9,7 @@ import MoonLoader from "react-spinners/MoonLoader";
 import moment from "moment";
 
 const Comments = ({ postId }) => {
-  const [desc, setDesc] = useState("");
+  const desc = useRef(null);
 
   const { currentUser } = useContext(AuthContext);
 
@@ -35,8 +35,8 @@ const Comments = ({ postId }) => {
 
   const handleClick = async (e) => {
     e.preventDefault();
-    mutation.mutate({ desc, postId });
-    console.log(desc);
+    mutation.mutate({ desc: desc.current.value, postId });
+    desc.current.value = "";
   };
 
   return (
@@ -45,11 +45,7 @@ const Comments = ({ postId }) => {
         <Link to={`/profile/${currentUser.id}`}>
           <img src={currentUser.profilePic} alt="" />
         </Link>
-        <TextareaAutosize
-          placeholder="Write a comment..."
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
-        />
+        <TextareaAutosize placeholder="Write a comment..." ref={desc} />
         <button onClick={handleClick}>Send</button>
       </div>
       {isLoading ? (
