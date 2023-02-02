@@ -104,64 +104,87 @@ const Create = () => {
     }
   };
 
-  const handleSelectedLocation = (result) => {
-    const display_name =
-      result.display_name.split(", ")[0] +
-      ", " +
-      result.display_name.split(", ")[1];
-
-    setSelectedlocation({
-      lat: result.lat,
-      long: result.long,
-      display_name,
-    });
-    setQuery(display_name);
-  };
-
   const handleSearch = useCallback(
     debounce((query) => {
       if (query.length > 0) {
-        // axios
-        //   .get(
-        //     `https://nominatim.openstreetmap.org/search?q=${query}&format=json&adressdetails=1&limit=6`
-        //   )
-        //   .then((res) => {
-        //     res = res.data;
+        axios
+          .get(
+            `https://nominatim.openstreetmap.org/search?q=${query}&addressdetails=1&format=json&limit=6`
+          )
+          .then((res) => {
+            res = res.data;
 
-        //     res = res.map(({ lat, lon, display_name }) => {
-        //       return { lat, lon, display_name };
-        //     });
-        //     /* Remove redundant properties */
+            res = res.map(({ lat, lon, display_name, address }) => {
+              const {
+                building,
+                road,
+                house_number,
+                postcode,
+                city,
+                town,
+                village,
+                hamlet,
+                state,
+                country,
+                administrative,
+              } = address;
 
-        //     res = res.filter(
-        //       (curr, index, self) =>
-        //         index ===
-        //         self.findIndex(
-        //           (location) => location.display_name === curr.display_name
-        //         )
-        //     );
-        //     /* Remove all duplicates from an array of response */
+              let detail = [];
+              let place = [];
+              let territory = [];
 
-        //     setData(res);
-        //   });
+              detail.push(building, road, house_number);
+              place.push(postcode, city, town, administrative, village, hamlet);
+              territory.push(state, country);
 
-        /* TEMPORARY */
-        let dataLoc = dataSzczecin;
+              detail = detail.filter((element) => element !== undefined);
+              place = place.filter((element) => element !== undefined);
+              territory = territory.filter((element) => element !== undefined);
 
-        dataLoc = dataLoc.map(({ lat, lon, display_name }) => {
-          return { lat, lon, display_name };
-        });
-        /* Remove redundant properties */
+              detail = detail.join(" ");
+              place = place.join(" ");
+              territory = territory.join(" ");
 
-        dataLoc = dataLoc.filter(
-          (curr, index, self) =>
-            index ===
-            self.findIndex(
-              (location) => location.display_name === curr.display_name
-            )
-        );
+              const CustomDisplayName = {
+                detail,
+                place,
+                territory,
+              };
 
-        setData(dataLoc);
+              return { lat, lon, display_name, address, CustomDisplayName };
+            });
+            /* Remove redundant properties */
+
+            res = res.filter(
+              (curr, index, self) =>
+                index ===
+                self.findIndex(
+                  (location) => location.display_name === curr.display_name
+                )
+            );
+            /* Remove all duplicates from an array of response */
+
+            setData(res);
+            console.log(res);
+          });
+
+        // /* TEMPORARY */
+        // let dataLoc = dataSzczecin;
+
+        // dataLoc = dataLoc.map(({ lat, lon, display_name }) => {
+        //   return { lat, lon, display_name };
+        // });
+        // /* Remove redundant properties */
+
+        // dataLoc = dataLoc.filter(
+        //   (curr, index, self) =>
+        //     index ===
+        //     self.findIndex(
+        //       (location) => location.display_name === curr.display_name
+        //     )
+        // );
+
+        // setData(dataLoc);
         /* Remove all duplicates from an array of response */
       }
 
@@ -178,6 +201,22 @@ const Create = () => {
     }, 500),
     []
   );
+
+  const handleSelectedLocation = ({ CustomDisplayName, ...other }) => {
+    setSelectedlocation({
+      lat: other.lat,
+      lon: other.lon,
+      CustomDisplayName,
+    });
+
+    const { detail, place, territory } = CustomDisplayName;
+
+    if (detail) {
+      setQuery(`${detail}\n${place}\n${territory}`);
+    } else {
+      setQuery(`${place}\n${territory}`);
+    }
+  };
 
   return (
     <div className="create">
@@ -211,6 +250,7 @@ const Create = () => {
                     type="text"
                     placeholder="Search location..."
                     value={query}
+                    style={{ fontSize: selectedlocation ? "0.9rem" : "1rem" }}
                     onChange={handleChange}
                   />
                 )}
@@ -265,12 +305,42 @@ const Create = () => {
           {data && !selectedlocation && (
             <div className="search-result">
               {data &&
-                data.map((result) => (
+                data.map(({ CustomDisplayName, ...other }) => (
                   <p
-                    key={result.key}
-                    onClick={() => handleSelectedLocation(result)}
+                    key={CustomDisplayName.key}
+                    onClick={() =>
+                      handleSelectedLocation({ CustomDisplayName, other })
+                    }
                   >
-                    {result.display_name}
+                    {CustomDisplayName.detail ? (
+                      <>
+                        {CustomDisplayName.detail}
+                        <br></br>
+                        {CustomDisplayName.territory && (
+                          <span>
+                            {CustomDisplayName.territory}
+                            <br></br>
+                          </span>
+                        )}
+                        {CustomDisplayName.place && (
+                          <span>
+                            {CustomDisplayName.place}
+                            <br></br>
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {CustomDisplayName.place}
+                        <br></br>
+                        {CustomDisplayName.territory && (
+                          <span>
+                            {CustomDisplayName.territory}
+                            <br></br>
+                          </span>
+                        )}
+                      </>
+                    )}
                   </p>
                 ))}
             </div>

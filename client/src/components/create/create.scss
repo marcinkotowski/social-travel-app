@@ -91,14 +91,18 @@
 
           textarea {
             width: 100%;
-            flex: 1;
+            flex: 2;
             resize: none;
-            font-size: 1rem;
+
             border: none;
             background-color: transparent;
             font-family: inherit;
-            color: inherit;
             outline: none;
+            font-size: 1rem;
+            color: #919191;
+          }
+          textarea::first-line {
+            color: var(--textColor);
           }
 
           .border {
@@ -150,11 +154,18 @@
         p {
           margin: 0rem 1.5rem;
           font-size: 0.9rem;
+
+          span {
+            color: #919191;
+          }
         }
 
         p:hover {
           color: var(--primaryColor);
           cursor: pointer;
+          span {
+            color: var(--primaryColor);
+          }
         }
       }
     }

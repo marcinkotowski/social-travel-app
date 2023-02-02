@@ -33,19 +33,34 @@ export const addPost = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is no valid");
 
-    const q =
+    let q =
       "INSERT INTO posts (`desc`, `img`, `createdAt`, `userId`) VALUES (?)";
 
-    const values = [
+    let values = [
       req.body.desc,
       req.body.img,
       moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       userInfo.id,
     ];
 
+    let postInsertId;
+    console.log(postInsertId);
+
     db.query(q, [values], (err, data) => {
       if (err) return res.status(500).json(err);
+      postInsertId = data.insertId;
       return res.status(200).json("Post has been created");
     });
+
+    // if (postInsertId) {
+    //   q = "Pin QUERY";
+
+    //   values = [postInsertId];
+
+    //   db.query(q, [values], (err, data) => {
+    //     if (err) return res.status(500).json(err);
+    //     return res.status(200).json("Post has been created");
+    //   });
+    // }
   });
 };
