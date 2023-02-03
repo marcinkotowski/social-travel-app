@@ -16,12 +16,10 @@ import debounce from "lodash/debounce";
 import axios from "axios";
 import { makeRequest } from "../../axios";
 import MoonLoader from "react-spinners/MoonLoader";
-import { dataSzczecin } from "../../assets/data";
 import { useMutation, useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Create = () => {
@@ -114,47 +112,61 @@ const Create = () => {
           .then((res) => {
             res = res.data;
 
+            /* Remove redundant properties */
             res = res.map(({ lat, lon, display_name, address }) => {
               const {
+                amenity,
                 building,
                 road,
                 house_number,
                 postcode,
                 city,
                 town,
+                administrative,
+                natural,
+                place,
                 village,
                 hamlet,
+                county,
                 state,
                 country,
-                administrative,
               } = address;
 
               let detail = [];
-              let place = [];
+              let region = [];
               let territory = [];
 
-              detail.push(building, road, house_number);
-              place.push(postcode, city, town, administrative, village, hamlet);
-              territory.push(state, country);
+              detail.push(amenity, building, road, house_number);
+              region.push(
+                postcode,
+                city,
+                town,
+                administrative,
+                natural,
+                place,
+                village,
+                hamlet
+              );
+              territory.push(county, state, country);
 
               detail = detail.filter((element) => element !== undefined);
-              place = place.filter((element) => element !== undefined);
+              region = region.filter((element) => element !== undefined);
               territory = territory.filter((element) => element !== undefined);
 
               detail = detail.join(" ");
-              place = place.join(" ");
+              region = region.join(" ");
               territory = territory.join(" ");
 
               const CustomDisplayName = {
                 detail,
-                place,
+                region,
                 territory,
               };
 
               return { lat, lon, display_name, address, CustomDisplayName };
             });
-            /* Remove redundant properties */
 
+            /* Remove all duplicates from an array of response */
             res = res.filter(
               (curr, index, self) =>
                 index ===
@@ -162,30 +174,10 @@ const Create = () => {
                   (location) => location.display_name === curr.display_name
                 )
             );
-            /* Remove all duplicates from an array of response */
 
             setData(res);
             console.log(res);
           });
-
-        // /* TEMPORARY */
-        // let dataLoc = dataSzczecin;
-
-        // dataLoc = dataLoc.map(({ lat, lon, display_name }) => {
-        //   return { lat, lon, display_name };
-        // });
-        // /* Remove redundant properties */
-
-        // dataLoc = dataLoc.filter(
-        //   (curr, index, self) =>
-        //     index ===
-        //     self.findIndex(
-        //       (location) => location.display_name === curr.display_name
-        //     )
-        // );
-
-        // setData(dataLoc);
-        /* Remove all duplicates from an array of response */
       }
 
       setSearchingDebounce(false);
@@ -209,12 +201,14 @@ const Create = () => {
       CustomDisplayName,
     });
 
-    const { detail, place, territory } = CustomDisplayName;
+    const { detail, region, territory } = CustomDisplayName;
 
     if (detail) {
-      setQuery(`${detail}\n${place}\n${territory}`);
+      setQuery(`${detail}\n${region}\n${territory}`);
+    } else if (region) {
+      setQuery(`${region}\n${territory}`);
     } else {
-      setQuery(`${place}\n${territory}`);
+      setQuery(territory);
     }
   };
 
@@ -250,7 +244,6 @@ const Create = () => {
                     type="text"
                     placeholder="Search location..."
                     value={query}
-                    style={{ fontSize: selectedlocation ? "0.9rem" : "1rem" }}
                     onChange={handleChange}
                   />
                 )}
@@ -315,31 +308,37 @@ const Create = () => {
                     {CustomDisplayName.detail ? (
                       <>
                         {CustomDisplayName.detail}
-                        <br></br>
+                        <br />
                         {CustomDisplayName.territory && (
                           <span>
                             {CustomDisplayName.territory}
-                            <br></br>
+                            <br />
                           </span>
                         )}
-                        {CustomDisplayName.place && (
+                        {CustomDisplayName.region && (
                           <span>
-                            {CustomDisplayName.place}
-                            <br></br>
+                            {CustomDisplayName.region}
+                            <br />
+                          </span>
+                        )}
+                      </>
+                    ) : CustomDisplayName.region ? (
+                      <>
+                        {CustomDisplayName.region && (
+                          <>
+                            {CustomDisplayName.region}
+                            <br />
+                          </>
+                        )}
+                        {CustomDisplayName.territory && (
+                          <span>
+                            {CustomDisplayName.territory}
+                            <br />
                           </span>
                         )}
                       </>
                     ) : (
-                      <>
-                        {CustomDisplayName.place}
-                        <br></br>
-                        {CustomDisplayName.territory && (
-                          <span>
-                            {CustomDisplayName.territory}
-                            <br></br>
-                          </span>
-                        )}
-                      </>
+                      <>{CustomDisplayName.territory}</>
                     )}
                   </p>
                 ))}

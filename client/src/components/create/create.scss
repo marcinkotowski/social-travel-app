@@ -98,11 +98,12 @@
             background-color: transparent;
             font-family: inherit;
             outline: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #919191;
           }
           textarea::first-line {
             color: var(--textColor);
+            font-size: 1rem;
           }
 
           .border {
