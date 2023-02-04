@@ -87,7 +87,7 @@ const Create = () => {
     try {
       let imgUrl = "";
       if (file) imgUrl = await upload();
-      mutation.mutate({ desc, img: imgUrl });
+      mutation.mutate({ desc, img: imgUrl, selectedlocation });
       reset({
         desc: "",
       });
@@ -107,7 +107,8 @@ const Create = () => {
       if (query.length > 0) {
         axios
           .get(
-            `https://nominatim.openstreetmap.org/search?q=${query}&addressdetails=1&format=json&limit=6`
+            `https://nominatim.openstreetmap.org/search?q=${query}&addressdetails=1&format=json&limit=6&accept-language=en-US`
+            // accept-language=pl
           )
           .then((res) => {
             res = res.data;
@@ -157,13 +158,13 @@ const Create = () => {
               region = region.join(" ");
               territory = territory.join(" ");
 
-              const CustomDisplayName = {
+              const customDisplayName = {
                 detail,
                 region,
                 territory,
               };
 
-              return { lat, lon, display_name, address, CustomDisplayName };
+              return { lat, lon, display_name, address, customDisplayName };
             });
 
             /* Remove all duplicates from an array of response */
@@ -194,14 +195,17 @@ const Create = () => {
     []
   );
 
-  const handleSelectedLocation = ({ CustomDisplayName, ...other }) => {
+  const handleSelectedLocation = ({ customDisplayName, ...other }) => {
+    const { lat, lon, address } = other.other;
+
     setSelectedlocation({
-      lat: other.lat,
-      lon: other.lon,
-      CustomDisplayName,
+      lat,
+      lon,
+      customDisplayName,
+      address,
     });
 
-    const { detail, region, territory } = CustomDisplayName;
+    const { detail, region, territory } = customDisplayName;
 
     if (detail) {
       setQuery(`${detail}\n${region}\n${territory}`);
@@ -298,47 +302,47 @@ const Create = () => {
           {data && !selectedlocation && (
             <div className="search-result">
               {data &&
-                data.map(({ CustomDisplayName, ...other }) => (
+                data.map(({ customDisplayName, ...other }) => (
                   <p
-                    key={CustomDisplayName.key}
+                    key={customDisplayName.key}
                     onClick={() =>
-                      handleSelectedLocation({ CustomDisplayName, other })
+                      handleSelectedLocation({ customDisplayName, other })
                     }
                   >
-                    {CustomDisplayName.detail ? (
+                    {customDisplayName.detail ? (
                       <>
-                        {CustomDisplayName.detail}
+                        {customDisplayName.detail}
                         <br />
-                        {CustomDisplayName.territory && (
+                        {customDisplayName.territory && (
                           <span>
-                            {CustomDisplayName.territory}
+                            {customDisplayName.territory}
                             <br />
                           </span>
                         )}
-                        {CustomDisplayName.region && (
+                        {customDisplayName.region && (
                           <span>
-                            {CustomDisplayName.region}
+                            {customDisplayName.region}
                             <br />
                           </span>
                         )}
                       </>
-                    ) : CustomDisplayName.region ? (
+                    ) : customDisplayName.region ? (
                       <>
-                        {CustomDisplayName.region && (
+                        {customDisplayName.region && (
                           <>
-                            {CustomDisplayName.region}
+                            {customDisplayName.region}
                             <br />
                           </>
                         )}
-                        {CustomDisplayName.territory && (
+                        {customDisplayName.territory && (
                           <span>
-                            {CustomDisplayName.territory}
+                            {customDisplayName.territory}
                             <br />
                           </span>
                         )}
                       </>
                     ) : (
-                      <>{CustomDisplayName.territory}</>
+                      <>{customDisplayName.territory}</>
                     )}
                   </p>
                 ))}

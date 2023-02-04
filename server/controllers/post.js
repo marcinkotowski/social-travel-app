@@ -33,34 +33,49 @@ export const addPost = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is no valid");
 
-    let q =
+    const queryPost =
       "INSERT INTO posts (`desc`, `img`, `createdAt`, `userId`) VALUES (?)";
 
-    let values = [
+    const valuesPost = [
       req.body.desc,
       req.body.img,
       moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       userInfo.id,
     ];
 
-    let postInsertId;
-    console.log(postInsertId);
-
-    db.query(q, [values], (err, data) => {
+    db.query(queryPost, [valuesPost], (err, dataPost) => {
       if (err) return res.status(500).json(err);
-      postInsertId = data.insertId;
-      return res.status(200).json("Post has been created");
+
+      if (!req.body.selectedlocation)
+        return res.status(200).json("Post without location has been created");
+
+      const postId = dataPost.insertId;
+      const { lat, lon, address } = req.body.selectedlocation;
+      const queryPin =
+        "INSERT INTO pins (`lat`, `lon`, `country`, `customDisplayName`, `postId`, `userId`) VALUES (?)";
+
+      const valuesPin = [
+        lat,
+        lon,
+        address.country,
+        JSON.stringify(req.body.selectedlocation.customDisplayName),
+        postId,
+        userInfo.id,
+      ];
+
+      db.query(queryPin, [valuesPin], (err, dataPin) => {
+        if (err) return res.status(500).json(err);
+
+        const pinId = dataPin.insertId;
+        const queryUpdatePinId = "UPDATE posts SET pinId = (?) WHERE id = (?)";
+
+        db.query(queryUpdatePinId, [pinId, postId], (err, updateDataPost) => {
+          if (err) return res.status(500).json(err);
+
+          console.log([dataPin, dataPost, updateDataPost]);
+          return res.status(200).json("Post with location has been created");
+        });
+      });
     });
-
-    // if (postInsertId) {
-    //   q = "Pin QUERY";
-
-    //   values = [postInsertId];
-
-    //   db.query(q, [values], (err, data) => {
-    //     if (err) return res.status(500).json(err);
-    //     return res.status(200).json("Post has been created");
-    //   });
-    // }
   });
 };
