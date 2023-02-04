@@ -13,8 +13,8 @@ export const getPosts = (req, res) => {
 
     const q =
       userId !== "undefined"
-        ? "SELECT p.*, u.id AS userId, name, profilePic FROM posts AS p JOIN users AS u ON (u.id = p.userId) WHERE p.userId = ? ORDER BY p.createdAt DESC"
-        : "SELECT p.*, u.id AS userId, name, profilePic FROM posts AS p JOIN users AS u ON (u.id = p.userId) LEFT JOIN relationships AS r ON (p.userId = r.followedUserId) WHERE r.followerUserId = ? OR p.userId = ? ORDER BY p.createdAt DESC";
+        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC"
+        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId)  LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) WHERE r.followerUserId = ? OR posts.userId = ? ORDER BY posts.createdAt DESC";
 
     const value =
       userId !== "undefined" ? [userId] : [userInfo.id, userInfo.id];
@@ -72,7 +72,7 @@ export const addPost = (req, res) => {
         db.query(queryUpdatePinId, [pinId, postId], (err, updateDataPost) => {
           if (err) return res.status(500).json(err);
 
-          console.log([dataPin, dataPost, updateDataPost]);
+          // console.log([dataPin, dataPost, updateDataPost]);
           return res.status(200).json("Post with location has been created");
         });
       });

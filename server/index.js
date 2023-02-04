@@ -9,6 +9,7 @@ import relationshipRoutes from "./routes/relationships.js";
 import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 
 /* MIDDLEWARES */
 app.use((req, res, next) => {
@@ -20,10 +21,15 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://countryflagsapi.com/png/"],
   })
 );
 app.use(cookieParser());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

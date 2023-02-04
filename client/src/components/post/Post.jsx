@@ -17,6 +17,8 @@ import Avatar from "../../assets/avatar.jpg";
 import Pl from "../../assets/pl.jpg";
 import En from "../../assets/en.jpg";
 import N from "../../assets/n.png";
+import padLock from "../../assets/padlock.png";
+import anonymous from "../../assets/anonymous.png";
 import Comments from "../comments/Comments";
 import { useState } from "react";
 import moment from "moment";
@@ -73,7 +75,16 @@ const Post = ({ post }) => {
             </div>
           </div>
           <div className="location">
-            <img src={post.location} alt="" />
+            <img
+              crossOrigin="true"
+              src={
+                post.country
+                  ? `https://countryflagsapi.com/png/${post.country?.toLowerCase()}`
+                  : anonymous
+              }
+              alt={post.country ? `${post.country} flag` : anonymous}
+              title={post.country ? `${post.country}` : "Anonymous location"}
+            />
           </div>
         </div>
         <div className="description">
