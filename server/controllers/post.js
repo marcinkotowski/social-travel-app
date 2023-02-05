@@ -26,6 +26,26 @@ export const getPosts = (req, res) => {
   });
 };
 
+export const getSavedPosts = (req, res) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Logged in to see posts");
+
+  jwt.verify(token, "secretkey", (err, userInfo) => {
+    if (err) return res.status(403).json("Token is no valid");
+
+    const q =
+      "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC";
+
+    const value =
+      userId !== "undefined" ? [userId] : [userInfo.id, userInfo.id];
+
+    db.query(q, value, (err, data) => {
+      if (err) return res.status(500).json(err);
+      return res.status(200).json(data);
+    });
+  });
+};
+
 export const addPost = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Logged in to add post!");

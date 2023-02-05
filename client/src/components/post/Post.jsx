@@ -34,13 +34,26 @@ const Post = ({ post }) => {
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
-  const { isLoading, error, data } = useQuery(["likes", post.id], () =>
+  const {
+    isLoading: likeIsLoading,
+    error: likeError,
+    data: likeData,
+  } = useQuery(["likes", post.id], () =>
     makeRequest.get("/likes/?postId=" + post.id).then((res) => {
       return res.data;
     })
   );
+  const {
+    isLoading: savedIsLoading,
+    error: savedError,
+    data: savedData,
+  } = useQuery(["saved", post.id], () =>
+    makeRequest.get("/saved/?postId=" + post.id).then((res) => {
+      return res.data;
+    })
+  );
 
-  const mutation = useMutation(
+  const likeMutation = useMutation(
     (liked) => {
       if (liked) return makeRequest.delete("/likes?postId=" + post.id);
       return makeRequest.post("/likes", { postId: post.id });
@@ -52,9 +65,24 @@ const Post = ({ post }) => {
       },
     }
   );
+  const savedMutation = useMutation(
+    (saved) => {
+      if (saved) return makeRequest.delete("/saved?postId=" + post.id);
+      return makeRequest.post("/saved", { postId: post.id });
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries("saved");
+      },
+    }
+  );
 
   const handleLike = () => {
-    mutation.mutate(data?.includes(currentUser.id));
+    likeMutation.mutate(likeData?.includes(currentUser.id));
+  };
+  const handleSave = () => {
+    savedMutation.mutate(savedData?.includes(currentUser.id));
   };
 
   return (
@@ -96,20 +124,23 @@ const Post = ({ post }) => {
           </div>
         )}
         <div className="actions-container">
-          {error ? (
+          {(likeError || savedData) === true ? (
             <p className="error">Something went wrong</p>
-          ) : isLoading ? (
-            <MoonLoader loading={isLoading} speedMultiplier={0.7} size={30} />
+          ) : likeIsLoading ? (
+            <MoonLoader
+              loading={likeIsLoading || savedData}
+              speedMultiplier={0.7}
+              size={15}
+            />
           ) : (
             <>
-              {" "}
               <div className="action" onClick={handleLike}>
-                {data.includes(currentUser.id) ? (
+                {likeData?.includes(currentUser.id) ? (
                   <MdFavorite />
                 ) : (
                   <MdFavoriteBorder />
                 )}
-                <p>{data.length}</p>
+                <p>{likeData?.length}</p>
               </div>
               <div
                 className="action"
@@ -118,9 +149,18 @@ const Post = ({ post }) => {
                 <MdOutlineComment />
                 <p>1</p>
               </div>
-              <div className="action">
-                <MdOutlineBookmarkBorder />
-                <p>Save</p>
+              <div className="action" onClick={handleSave}>
+                {savedData?.includes(currentUser.id) ? (
+                  <>
+                    <MdBookmark />
+                    <p>Saved</p>
+                  </>
+                ) : (
+                  <>
+                    <MdOutlineBookmarkBorder />
+                    <p>Save</p>
+                  </>
+                )}
               </div>
             </>
           )}
