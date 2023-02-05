@@ -2,7 +2,7 @@ import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 
-export const getPosts = (req, res) => {
+export const getAllPosts = (req, res) => {
   const userId = req.query.userId;
 
   const token = req.cookies.accessToken;
@@ -34,10 +34,9 @@ export const getSavedPosts = (req, res) => {
     if (err) return res.status(403).json("Token is no valid");
 
     const q =
-      "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC";
+      "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) JOIN saved ON (saved.postId = posts.id AND saved.userId = ?) ORDER BY posts.createdAt DESC";
 
-    const value =
-      userId !== "undefined" ? [userId] : [userInfo.id, userInfo.id];
+    const value = [userInfo.id];
 
     db.query(q, value, (err, data) => {
       if (err) return res.status(500).json(err);

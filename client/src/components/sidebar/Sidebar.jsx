@@ -58,7 +58,7 @@ const Sidebar = () => {
               <span>Explore</span>
             </div>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/saved"}>
             <div className="icon">
               <MdOutlineBookmarkBorder />
               {/* <MdBookmark /> */}

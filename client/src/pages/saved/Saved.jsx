@@ -5,9 +5,7 @@ import Posts from "../../components/posts/Posts";
 const Saved = () => {
   return (
     <div className="saved">
-      <div className="posts-container">
-        <Posts />
-      </div>
+      <Posts saved={true} />
     </div>
   );
 };
