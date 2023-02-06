@@ -9,7 +9,11 @@ import {
   MdOutlineBookmarkBorder,
   MdOutlineComment,
   MdComment,
+  MdOutlineReportProblem,
 } from "react-icons/md";
+import { SlOptionsVertical } from "react-icons/sl";
+import { GoReport } from "react-icons/go";
+import { AiOutlineDelete } from "react-icons/ai";
 
 import Zdj from "../../assets/tlo.jpg";
 import Zdj2 from "../../assets/tlo2.jpg";
@@ -30,6 +34,7 @@ import MoonLoader from "react-spinners/MoonLoader";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
@@ -101,6 +106,31 @@ const Post = ({ post }) => {
               </p>
               <p className="timestamp">{moment(post.createdAt).fromNow()}</p>
             </div>
+          </div>
+          <div className="options-container">
+            {!optionsOpen && (
+              <SlOptionsVertical onClick={() => setOptionsOpen(true)} />
+            )}
+            {optionsOpen && (
+              <div className="options">
+                {post.userId === currentUser.id ? (
+                  <p>
+                    <span>
+                      <AiOutlineDelete />
+                    </span>
+                    <span>Delete</span>
+                  </p>
+                ) : (
+                  <p>
+                    <span>
+                      <GoReport />
+                    </span>
+                    <span>Report</span>
+                  </p>
+                )}
+                <p onClick={() => setOptionsOpen(false)}>Cancel</p>
+              </div>
+            )}
           </div>
           <div className="location">
             <img
