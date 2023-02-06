@@ -65,7 +65,6 @@ const Post = ({ post }) => {
     },
     {
       onSuccess: () => {
-        // Invalidate and refetch
         queryClient.invalidateQueries("likes");
       },
     }
@@ -77,8 +76,17 @@ const Post = ({ post }) => {
     },
     {
       onSuccess: () => {
-        // Invalidate and refetch
         queryClient.invalidateQueries("saved");
+      },
+    }
+  );
+  const deleteMutation = useMutation(
+    () => {
+      return makeRequest.delete("/posts/" + post.id);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("posts");
       },
     }
   );
@@ -88,6 +96,9 @@ const Post = ({ post }) => {
   };
   const handleSave = () => {
     savedMutation.mutate(savedData?.includes(currentUser.id));
+  };
+  const handleDelete = () => {
+    deleteMutation.mutate(post.id);
   };
 
   return (
@@ -114,7 +125,7 @@ const Post = ({ post }) => {
             {optionsOpen && (
               <div className="options">
                 {post.userId === currentUser.id ? (
-                  <p>
+                  <p onClick={handleDelete}>
                     <span>
                       <AiOutlineDelete />
                     </span>
