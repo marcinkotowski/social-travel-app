@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import "./post.scss";
@@ -14,6 +14,7 @@ import {
 import { SlOptionsVertical } from "react-icons/sl";
 import { GoReport } from "react-icons/go";
 import { AiOutlineDelete } from "react-icons/ai";
+import { RiMailSendLine } from "react-icons/ri";
 
 import Zdj from "../../assets/tlo.jpg";
 import Zdj2 from "../../assets/tlo2.jpg";
@@ -57,6 +58,20 @@ const Post = ({ post }) => {
       return res.data;
     })
   );
+  const {
+    isLoading: reportIsLoading,
+    error: reportError,
+    data: reportData,
+  } = useQuery(
+    ["reports", post.id],
+    () =>
+      makeRequest.get("/reports/" + post.id).then((res) => {
+        return res.data;
+      }),
+    {
+      enabled: optionsOpen,
+    }
+  );
 
   const likeMutation = useMutation(
     (liked) => {
@@ -90,6 +105,16 @@ const Post = ({ post }) => {
       },
     }
   );
+  const reportMutation = useMutation(
+    () => {
+      return makeRequest.post("/reports/", { postId: post.id });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("reports");
+      },
+    }
+  );
 
   const handleLike = () => {
     likeMutation.mutate(likeData?.includes(currentUser.id));
@@ -100,6 +125,28 @@ const Post = ({ post }) => {
   const handleDelete = () => {
     deleteMutation.mutate(post.id);
   };
+  const handleReport = () => {
+    reportMutation.mutate(post.id);
+  };
+
+  const detectClickOutside = (ref) => {
+    useEffect(() => {
+      const handler = (event) => {
+        if (!optionsRef.current?.contains(event.target)) {
+          setOptionsOpen(false);
+        }
+      };
+
+      document.addEventListener("mousedown", handler);
+
+      return () => {
+        document.removeEventListener("mousedown", handler);
+      };
+    }, [ref]);
+  };
+
+  const optionsRef = useRef();
+  detectClickOutside(optionsRef);
 
   return (
     <div className="post">
@@ -122,25 +169,35 @@ const Post = ({ post }) => {
             {!optionsOpen && (
               <SlOptionsVertical onClick={() => setOptionsOpen(true)} />
             )}
-            {optionsOpen && (
-              <div className="options">
-                {post.userId === currentUser.id ? (
-                  <p onClick={handleDelete}>
-                    <span>
-                      <AiOutlineDelete />
-                    </span>
-                    <span>Delete</span>
-                  </p>
-                ) : (
-                  <p>
-                    <span>
-                      <GoReport />
-                    </span>
-                    <span>Report</span>
-                  </p>
-                )}
-                <p onClick={() => setOptionsOpen(false)}>Cancel</p>
-              </div>
+            {reportError ? (
+              <p className="error">Something went wrong</p>
+            ) : reportIsLoading ? (
+              <MoonLoader
+                loading={reportIsLoading}
+                speedMultiplier={0.7}
+                size={15}
+              />
+            ) : (
+              optionsOpen && (
+                <div ref={optionsRef} className="options">
+                  {post.userId === currentUser.id ? (
+                    <p onClick={handleDelete}>
+                      <span>
+                        <AiOutlineDelete />
+                      </span>
+                      <span>Delete</span>
+                    </p>
+                  ) : (
+                    <p onClick={reportData.length ? undefined : handleReport}>
+                      <span>
+                        {reportData.length ? <RiMailSendLine /> : <GoReport />}
+                      </span>
+                      <span>{reportData.length ? "Reported" : "Report"}</span>
+                    </p>
+                  )}
+                  <p onClick={() => setOptionsOpen(false)}>Cancel</p>
+                </div>
+              )
             )}
           </div>
           <div className="location">

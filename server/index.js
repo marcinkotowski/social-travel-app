@@ -7,6 +7,7 @@ import savedRoutes from "./routes/saved.js";
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
 import relationshipRoutes from "./routes/relationships.js";
+import reportRoutes from "./routes/reports.js";
 import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
@@ -53,6 +54,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/likes", likeRoutes);
 app.use("/api/saved", savedRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/reports", reportRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/relationships", relationshipRoutes);
 
