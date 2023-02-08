@@ -286,8 +286,7 @@ const Create = () => {
                   }}
                 >
                   Add location
-                </span>{" "}
-                /{" "}
+                </span>
                 <span
                   onClick={() => {
                     setAddLocation(!addLocation);

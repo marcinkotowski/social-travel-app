@@ -60,6 +60,17 @@
         display: none;
       }
 
+      .leaflet-popup-content {
+        p {
+          margin: 0rem;
+          font-size: 0.7rem;
+
+          span {
+            color: #919191;
+          }
+        }
+      }
+
       // }
 
       .user-details {

@@ -18,6 +18,7 @@ const Profile = () => {
   const [typePost, setTypePost] = useState("public");
 
   const { currentUser } = useContext(AuthContext);
+  const queryClient = useQueryClient();
 
   const userId = useLocation().pathname.split("/")[2];
 
@@ -26,7 +27,16 @@ const Profile = () => {
       return res.data;
     })
   );
-  const queryClient = useQueryClient();
+
+  const {
+    isLoading: pinIsLoading,
+    error: pinError,
+    data: pinData,
+  } = useQuery(["pins"], () =>
+    makeRequest.get("/pins/" + userId).then((res) => {
+      return res.data;
+    })
+  );
 
   const { isLoading: rIsLoading, data: relationshipData } = useQuery(
     ["relationship"],
@@ -75,25 +85,69 @@ const Profile = () => {
         <div className="profile">
           <div className="user-information">
             {/* <div className="map"> */}
-            <MapContainer center={[20, 0]} zoom={1} scrollWheelZoom={false}>
-              <TileLayer
-                /* Default */
-                // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                /* Esri.WorldStreetMap */
-                attribution="Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-                position={"topright"}
-              />
-              <Marker
-                position={[51.82598741029167, 17.454792240792532]}
-                icon={myIcon}
-              >
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-              </Marker>
-            </MapContainer>
+            {pinError ? (
+              <p className="error">Something went wrong</p>
+            ) : pinIsLoading ? (
+              <MoonLoader loading={isLoading} speedMultiplier={0.7} size={30} />
+            ) : (
+              <MapContainer center={[20, 0]} zoom={1} scrollWheelZoom={false}>
+                <TileLayer
+                  /* Default */
+                  // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  /* Esri.WorldStreetMap */
+                  attribution="Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+                  position={"topright"}
+                />
+                {pinData.map(({ lat, lon, customDisplayName }, key) => {
+                  customDisplayName = JSON.parse(customDisplayName);
+                  return (
+                    <Marker position={[lat, lon]} icon={myIcon} key={key}>
+                      <Popup>
+                        <p>
+                          {customDisplayName.detail ? (
+                            <>
+                              {customDisplayName.detail}
+                              <br />
+                              {customDisplayName.territory && (
+                                <span>
+                                  {customDisplayName.territory}
+                                  <br />
+                                </span>
+                              )}
+                              {customDisplayName.region && (
+                                <span>
+                                  {customDisplayName.region}
+                                  <br />
+                                </span>
+                              )}
+                            </>
+                          ) : customDisplayName.region ? (
+                            <>
+                              {customDisplayName.region && (
+                                <>
+                                  {customDisplayName.region}
+                                  <br />
+                                </>
+                              )}
+                              {customDisplayName.territory && (
+                                <span>
+                                  {customDisplayName.territory}
+                                  <br />
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <>{customDisplayName.territory}</>
+                          )}
+                        </p>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
+            )}
             {/* <img
               src="https://www.google.com/maps/d/u/0/thumbnail?mid=1oisvAcXvhO6Un_cgYOjMHWsdUjY&hl=en_US"
               alt=""
@@ -120,10 +174,22 @@ const Profile = () => {
                     </p>
                   </div>
                   <div className="journeys">
-                    <FaMapMarkerAlt />
-                    <p>
-                      Journeys: <span>12</span>
-                    </p>
+                    {pinError ? (
+                      <p className="error">Something went wrong</p>
+                    ) : pinIsLoading ? (
+                      <MoonLoader
+                        loading={isLoading}
+                        speedMultiplier={0.7}
+                        size={30}
+                      />
+                    ) : (
+                      <>
+                        <FaMapMarkerAlt />
+                        <p>
+                          Journeys: <span>{pinData.length}</span>
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
                 <div className="action">
