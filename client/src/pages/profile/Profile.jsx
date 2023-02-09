@@ -8,17 +8,16 @@ import { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { makeRequest } from "../../axios.js";
 import { useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import MoonLoader from "react-spinners/MoonLoader";
 
 const Profile = () => {
-  const [typePost, setTypePost] = useState("public");
+  const [privatePost, setPrivatePost] = useState(false);
 
   const { currentUser } = useContext(AuthContext);
-  const queryClient = useQueryClient();
 
   const userId = useLocation().pathname.split("/")[2];
 
@@ -216,20 +215,19 @@ const Profile = () => {
           <div className="archives">
             <div className="type-post">
               <p
-                className={typePost === "public" ? "active" : ""}
-                onClick={() => setTypePost("public")}
+                className={privatePost ? "" : "active"}
+                onClick={() => setPrivatePost(false)}
               >
                 Public
               </p>
               <p
-                className={typePost === "private" ? "active" : ""}
-                onClick={() => setTypePost("private")}
+                className={privatePost ? "active" : ""}
+                onClick={() => setPrivatePost(true)}
               >
                 Private
               </p>
             </div>
-            {/* <Posts typePost={typePost} /> */}
-            <Posts userId={userId} />
+            <Posts userId={userId} type={privatePost && "private"} />
           </div>
         </div>
       )}

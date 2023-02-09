@@ -197,7 +197,10 @@
         }
       }
     }
+  }
 
+  .archives {
+    // height: fit-content;
     .type-post {
       display: flex;
       height: 2.4rem;
@@ -228,11 +231,6 @@
         background-color: var(--postColor);
       }
     }
-  }
-
-  .archives {
-    // height: fit-content;
-    width: fit-content;
 
     .posts {
       margin: 0;

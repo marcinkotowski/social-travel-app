@@ -5,7 +5,7 @@ import Posts from "../../components/posts/Posts";
 const Saved = () => {
   return (
     <div className="saved">
-      <Posts saved={true} />
+      <Posts type={"saved"} />
     </div>
   );
 };

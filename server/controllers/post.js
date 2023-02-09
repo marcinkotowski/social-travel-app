@@ -2,8 +2,8 @@ import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 
-export const getAllPosts = (req, res) => {
-  const userId = req.query.userId;
+export const getPosts = (req, res) => {
+  const type = req.query.type;
 
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Logged in to see posts");
@@ -12,12 +12,14 @@ export const getAllPosts = (req, res) => {
     if (err) return res.status(403).json("Token is no valid");
 
     const q =
-      userId !== "undefined"
-        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC"
-        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId)  LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) WHERE r.followerUserId = ? OR posts.userId = ? ORDER BY posts.createdAt DESC";
+      type === "saved"
+        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) JOIN saved ON (saved.postId = posts.id AND saved.userId = ?) WHERE (posts.isPrivate IS NULL OR (posts.isPrivate IS NOT NULL AND posts.userId = ?)) ORDER BY posts.createdAt DESC"
+        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId)  LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate IS NULL OR (posts.isPrivate IS NOT NULL AND posts.userId = ?))) ORDER BY posts.createdAt DESC";
 
     const value =
-      userId !== "undefined" ? [userId] : [userInfo.id, userInfo.id];
+      type === "saved"
+        ? [userInfo.id, userInfo.id]
+        : [userInfo.id, userInfo.id, userInfo.id];
 
     db.query(q, value, (err, data) => {
       if (err) return res.status(500).json(err);
@@ -26,7 +28,10 @@ export const getAllPosts = (req, res) => {
   });
 };
 
-export const getSavedPosts = (req, res) => {
+export const getUserPosts = (req, res) => {
+  const userId = req.params.userId;
+  const type = req.query.type;
+
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Logged in to see posts");
 
@@ -34,11 +39,11 @@ export const getSavedPosts = (req, res) => {
     if (err) return res.status(403).json("Token is no valid");
 
     const q =
-      "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) JOIN saved ON (saved.postId = posts.id AND saved.userId = ?) ORDER BY posts.createdAt DESC";
+      type === "private"
+        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate IS NOT NULL) ORDER BY posts.createdAt DESC"
+        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC";
 
-    const value = [userInfo.id];
-
-    db.query(q, value, (err, data) => {
+    db.query(q, [userId], (err, data) => {
       if (err) return res.status(500).json(err);
       return res.status(200).json(data);
     });
@@ -90,8 +95,6 @@ export const addPost = (req, res) => {
 
         db.query(queryUpdatePinId, [pinId, postId], (err, updateDataPost) => {
           if (err) return res.status(500).json(err);
-
-          // console.log([dataPin, dataPost, updateDataPost]);
           return res.status(200).json("Post with location has been created");
         });
       });

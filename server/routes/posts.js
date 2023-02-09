@@ -1,15 +1,15 @@
 import express from "express";
 import {
-  getAllPosts,
+  getPosts,
+  getUserPosts,
   addPost,
-  getSavedPosts,
   deletePost,
 } from "../controllers/post.js";
 
 const router = express.Router();
 
-router.get("/all", getAllPosts);
-router.get("/saved", getSavedPosts);
+router.get("/", getPosts);
+router.get("/:userId", getUserPosts);
 router.post("/", addPost);
 router.delete("/:id", deletePost);
 

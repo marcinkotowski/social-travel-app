@@ -1,6 +1,7 @@
 client/node_modules
 server/node_modules
 ideas.txt
+todolist.txt
 ./server/connect.js
 client/public/upload
 client/src/assets

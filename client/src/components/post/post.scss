@@ -4,6 +4,7 @@
   // display: flex;
   // flex-direction: column;
   // float: left;
+  text-align: left;
 
   width: 27.6rem;
   padding: 1.2rem;
@@ -78,7 +79,7 @@
           width: 2rem;
           height: 2rem;
           border-radius: 50%;
-          object-fit: fill;
+          object-fit: cover;
         }
       }
     }

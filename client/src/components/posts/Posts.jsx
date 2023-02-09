@@ -5,14 +5,16 @@ import { useQuery } from "react-query";
 import { makeRequest } from "../../axios.js";
 import MoonLoader from "react-spinners/MoonLoader";
 
-const Posts = ({ userId, saved }) => {
-  const { isLoading, error, data } = useQuery("posts", () => {
-    if (saved) {
-      return makeRequest.get("/posts/saved").then((res) => {
-        return res.data;
-      });
+const Posts = ({ userId, type }) => {
+  const { isLoading, error, data } = useQuery(["posts", type], () => {
+    if (userId) {
+      return makeRequest
+        .get("/posts/" + userId + "?type=" + type)
+        .then((res) => {
+          return res.data;
+        });
     } else {
-      return makeRequest.get("/posts/all?userId=" + userId).then((res) => {
+      return makeRequest.get("/posts/?type=" + type).then((res) => {
         return res.data;
       });
     }
@@ -24,8 +26,10 @@ const Posts = ({ userId, saved }) => {
         <p className="error">Something went wrong</p>
       ) : isLoading ? (
         <MoonLoader loading={isLoading} speedMultiplier={0.7} size={30} />
-      ) : (
+      ) : data.length ? (
         data.map((post) => <Post post={post} key={post.id} />)
+      ) : (
+        <p>No matching results</p>
       )}
     </div>
   );
