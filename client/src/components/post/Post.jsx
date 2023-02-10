@@ -39,7 +39,7 @@ const Post = ({ post }) => {
     error: likeError,
     data: likeData,
   } = useQuery(["likes", post.id], () =>
-    makeRequest.get("/likes/?postId=" + post.id).then((res) => {
+    makeRequest.get(`/likes/?postId=${post.id}`).then((res) => {
       return res.data;
     })
   );
@@ -48,14 +48,14 @@ const Post = ({ post }) => {
     error: savedError,
     data: savedData,
   } = useQuery(["saved", post.id], () =>
-    makeRequest.get("/saved/?postId=" + post.id).then((res) => {
+    makeRequest.get(`/saved/?postId=${post.id}`).then((res) => {
       return res.data;
     })
   );
 
   const likeMutation = useMutation(
     (liked) => {
-      if (liked) return makeRequest.delete("/likes?postId=" + post.id);
+      if (liked) return makeRequest.delete(`/likes?postId=${post.id}`);
       return makeRequest.post("/likes", { postId: post.id });
     },
     {
@@ -66,7 +66,7 @@ const Post = ({ post }) => {
   );
   const savedMutation = useMutation(
     (saved) => {
-      if (saved) return makeRequest.delete("/saved?postId=" + post.id);
+      if (saved) return makeRequest.delete(`/saved?postId=${post.id}`);
       return makeRequest.post("/saved", { postId: post.id });
     },
     {

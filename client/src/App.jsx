@@ -89,10 +89,6 @@ function App() {
       path: "/register",
       element: <Register />,
     },
-    // {
-    //   path: "/create",
-    //   element: <Create />,
-    // },
   ]);
 
   const { darkMode } = useContext(DarkModeContext);

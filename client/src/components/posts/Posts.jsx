@@ -8,13 +8,11 @@ import MoonLoader from "react-spinners/MoonLoader";
 const Posts = ({ userId, type }) => {
   const { isLoading, error, data } = useQuery(["posts", type], () => {
     if (userId) {
-      return makeRequest
-        .get("/posts/" + userId + "?type=" + type)
-        .then((res) => {
-          return res.data;
-        });
+      return makeRequest.get(`/posts/${userId}?type=${type}`).then((res) => {
+        return res.data;
+      });
     } else {
-      return makeRequest.get("/posts/?type=" + type).then((res) => {
+      return makeRequest.get(`/posts/?type=${type}`).then((res) => {
         return res.data;
       });
     }

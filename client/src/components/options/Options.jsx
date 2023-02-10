@@ -20,7 +20,7 @@ const options = ({ postId, postUserId }) => {
     useQuery(
       ["reports", postId],
       ({ signal }) =>
-        makeRequest.get("/reports/" + postId, { signal }).then((res) => {
+        makeRequest.get(`/reports/${postId}`, { signal }).then((res) => {
           return res.data;
         }),
       {
@@ -40,7 +40,7 @@ const options = ({ postId, postUserId }) => {
   );
   const deleteMutation = useMutation(
     () => {
-      return makeRequest.delete("/posts/" + postId);
+      return makeRequest.delete(`/posts/${postId}`);
     },
     {
       onSuccess: () => {
