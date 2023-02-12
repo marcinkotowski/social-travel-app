@@ -93,8 +93,8 @@ const options = ({ postId, postUserId }) => {
               <p onClick={handleDelete}>
                 <span>
                   <AiOutlineDelete />
+                  Delete
                 </span>
-                <span>Delete</span>
               </p>
               <p onClick={() => setOptionsOpen(false)}>Cancel</p>
             </>

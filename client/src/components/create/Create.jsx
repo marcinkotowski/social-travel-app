@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import TextareaAutosize from "react-textarea-autosize";
@@ -7,10 +7,12 @@ import {
   MdAddLocationAlt,
   MdOutlineInsertPhoto,
   MdOpenInNew,
-  MdDelete,
-  MdEdit,
   MdError,
+  MdOutlinePublic,
+  MdCancel,
 } from "react-icons/md";
+import { HiLockClosed } from "react-icons/hi";
+import { BiLockAlt } from "react-icons/bi";
 import { useState } from "react";
 import debounce from "lodash/debounce";
 import axios from "axios";
@@ -30,6 +32,8 @@ const Create = () => {
   const [selectedlocation, setSelectedlocation] = useState("");
   const [anonymousLocation, setAnonymousLocation] = useState(false);
   const [file, setFile] = useState(null);
+  const [visibilityOpen, setVisibilityOpen] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const schema = yup.object().shape({
     desc: yup.string("Description must be string"),
@@ -216,6 +220,26 @@ const Create = () => {
     }
   };
 
+  const detectClickOutside = (ref) => {
+    useEffect(() => {
+      const handler = (event) => {
+        if (!visibilityRef.current?.contains(event.target)) {
+          setVisibilityOpen(false);
+          queryClient.cancelQueries("reports");
+        }
+      };
+
+      document.addEventListener("mousedown", handler);
+
+      return () => {
+        document.removeEventListener("mousedown", handler);
+      };
+    }, [ref]);
+  };
+
+  const visibilityRef = useRef();
+  detectClickOutside(visibilityRef);
+
   return (
     <div className="create">
       <div className="content">
@@ -349,30 +373,100 @@ const Create = () => {
             </div>
           )}
         </div>
-        <div className="add-photos">
-          {!file && <MdOutlineInsertPhoto />}
-          <input
-            type="file"
-            id="file"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              setFile(e.target.files[0]);
-              e.target.value = null;
-            }}
-          />
-          {file && <img src={URL.createObjectURL(file)} />}
-          <label htmlFor="file">
-            <p>
-              <span>{file ? <MdEdit /> : "Add Media"}</span>
-            </p>
-          </label>
-          <span>{file && <MdDelete onClick={() => setFile(null)} />}</span>
-          <button onClick={handleSubmit(handleClick)} disabled={!watch("desc")}>
-            Publish
-          </button>
+        <div className="last-add-container">
+          <div className="add-photos">
+            {file ? (
+              <div className="uploaded">
+                <img src={URL.createObjectURL(file)} />
+                <span className="cancel-background"></span>
+                <MdCancel onClick={() => setFile(null)} />
+              </div>
+            ) : (
+              <div className="upload">
+                <MdOutlineInsertPhoto />
+                <input
+                  type="file"
+                  id="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    setFile(e.target.files[0]);
+                    e.target.value = null;
+                  }}
+                />
+                <label htmlFor="file">
+                  <p>
+                    <span>Add Media</span>
+                  </p>
+                </label>
+              </div>
+            )}
+          </div>
+          <div className="buttons">
+            <button
+              className="visibility"
+              onClick={() => setVisibilityOpen(true)}
+            >
+              {isPrivate ? (
+                <>
+                  <HiLockClosed />
+                  Private
+                </>
+              ) : (
+                <>
+                  <MdOutlinePublic />
+                  Public
+                </>
+              )}
+            </button>
+            {visibilityOpen && (
+              <div className="options" ref={visibilityRef}>
+                <p
+                  onClick={() => {
+                    setIsPrivate(false);
+                    setVisibilityOpen(false);
+                  }}
+                >
+                  {isPrivate ? (
+                    <>
+                      <MdOutlinePublic />
+                      Public
+                    </>
+                  ) : (
+                    <span>
+                      <MdOutlinePublic />
+                      Public
+                    </span>
+                  )}
+                </p>
+                <p
+                  onClick={() => {
+                    setIsPrivate(true);
+                    setVisibilityOpen(false);
+                  }}
+                >
+                  {!isPrivate ? (
+                    <>
+                      <BiLockAlt />
+                      Private
+                    </>
+                  ) : (
+                    <span>
+                      <HiLockClosed />
+                      Private
+                    </span>
+                  )}
+                </p>
+              </div>
+            )}
+            <button
+              className="publish"
+              onClick={handleSubmit(handleClick)}
+              disabled={!watch("desc")}
+            >
+              Publish
+            </button>
+          </div>
         </div>
-
-        {/* <hr /> */}
       </div>
     </div>
   );
