@@ -13,8 +13,8 @@ export const getPosts = (req, res) => {
 
     const q =
       type === "saved"
-        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) JOIN saved ON (saved.postId = posts.id AND saved.userId = ?) WHERE (posts.isPrivate IS NULL OR (posts.isPrivate IS NOT NULL AND posts.userId = ?)) ORDER BY posts.createdAt DESC"
-        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId)  LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate IS NULL OR (posts.isPrivate IS NOT NULL AND posts.userId = ?))) ORDER BY posts.createdAt DESC";
+        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) JOIN saved ON (saved.postId = posts.id AND saved.userId = ?) WHERE (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?)) ORDER BY posts.createdAt DESC"
+        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId)  LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?))) ORDER BY posts.createdAt DESC";
 
     const value =
       type === "saved"
@@ -40,7 +40,7 @@ export const getUserPosts = (req, res) => {
 
     const q =
       type === "private"
-        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate IS NOT NULL) ORDER BY posts.createdAt DESC"
+        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate = 1) ORDER BY posts.createdAt DESC"
         : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC";
 
     db.query(q, [userId], (err, data) => {
@@ -58,13 +58,14 @@ export const addPost = (req, res) => {
     if (err) return res.status(403).json("Token is no valid");
 
     const queryPost =
-      "INSERT INTO posts (`desc`, `img`, `createdAt`, `userId`) VALUES (?)";
+      "INSERT INTO posts (`desc`, `img`, `createdAt`, `userId`, `isPrivate`) VALUES (?)";
 
     const valuesPost = [
       req.body.desc,
       req.body.img,
       moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       userInfo.id,
+      req.body.isPrivate,
     ];
 
     db.query(queryPost, [valuesPost], (err, dataPost) => {

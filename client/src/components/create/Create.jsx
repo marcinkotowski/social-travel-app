@@ -91,7 +91,7 @@ const Create = () => {
     try {
       let imgUrl = "";
       if (file) imgUrl = await upload();
-      mutation.mutate({ desc, img: imgUrl, selectedlocation });
+      mutation.mutate({ desc, img: imgUrl, selectedlocation, isPrivate });
       reset({
         desc: "",
       });
