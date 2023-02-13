@@ -41,9 +41,11 @@ export const getUserPosts = (req, res) => {
     const q =
       type === "private"
         ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate = 1) ORDER BY posts.createdAt DESC"
-        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC";
+        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate = 0) ORDER BY posts.createdAt DESC";
 
-    db.query(q, [userId], (err, data) => {
+    const value = type === "private" ? [userInfo.id] : [userId];
+
+    db.query(q, value, (err, data) => {
       if (err) return res.status(500).json(err);
       return res.status(200).json(data);
     });
