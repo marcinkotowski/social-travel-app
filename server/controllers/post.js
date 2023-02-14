@@ -38,14 +38,27 @@ export const getUserPosts = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is no valid");
 
-    const q =
-      type === "private"
-        ? "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate = 1) ORDER BY posts.createdAt DESC"
-        : "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate = 0) ORDER BY posts.createdAt DESC";
+    let q = "";
 
-    const value = type === "private" ? [userInfo.id] : [userId];
+    if (type === "private") {
+      if (userId != userInfo.id)
+        return res
+          .status(204)
+          .json("You can't see other people's private posts");
 
-    db.query(q, value, (err, data) => {
+      q =
+        "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate = 1) ORDER BY posts.createdAt DESC";
+    } else {
+      if (userId == userInfo.id) {
+        q =
+          "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE posts.userId = ? ORDER BY posts.createdAt DESC";
+      } else {
+        q =
+          "SELECT posts.*, country, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id) WHERE (posts.userId = ? AND posts.isPrivate = 0) ORDER BY posts.createdAt DESC";
+      }
+    }
+
+    db.query(q, [userId], (err, data) => {
       if (err) return res.status(500).json(err);
       return res.status(200).json(data);
     });
