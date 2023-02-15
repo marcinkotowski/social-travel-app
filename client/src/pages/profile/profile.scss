@@ -198,44 +198,6 @@
       }
     }
   }
-
-  .archives {
-    // height: fit-content;
-    .type-post {
-      display: flex;
-      height: 2.4rem;
-      color: var(--textColor);
-      width: 100%;
-      //nowy kolor to ja
-      background-color: var(--bgLocation);
-
-      //teraz
-      // background-color: var(--postColor);
-      border-radius: 10px;
-      margin-bottom: 1.2rem;
-
-      p {
-        flex: 1;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        cursor: pointer;
-
-        //teraz
-        // background-color: var(--postColor);
-      }
-
-      .active {
-        background-color: var(--postColor);
-      }
-    }
-
-    .posts {
-      margin: 0;
-    }
-  }
 }
 
 @media (max-width: 80rem), (max-height: 32rem) {

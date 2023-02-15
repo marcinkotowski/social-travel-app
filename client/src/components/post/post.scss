@@ -57,12 +57,32 @@
           .timestamp {
             margin: 0;
             font-size: 0.7rem;
-            color: #f7a100;
+            color: #838383;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
+
+            display: flex;
+            align-items: center;
+            gap: 4px;
+
+            svg {
+              font-size: 0.7rem;
+            }
           }
         }
+      }
+
+      // .padlock {
+      //   margin-right: 5px;
+      //   img {
+      //     width: 20px;
+      //     height: 20px;
+      //   }
+      // }
+      svg {
+        margin-right: 5px;
+        font-size: 1.2rem;
       }
 
       .location {
@@ -74,6 +94,17 @@
         height: 3rem;
         background-color: var(--bgLocation);
         border-radius: 50%;
+        position: relative;
+
+        .padlock {
+          position: absolute;
+          top: -3px;
+          right: -3px;
+          img {
+            width: 20px;
+            height: 20px;
+          }
+        }
 
         img {
           width: 2rem;

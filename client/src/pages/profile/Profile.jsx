@@ -15,8 +15,6 @@ import { AuthContext } from "../../context/authContext";
 import MoonLoader from "react-spinners/MoonLoader";
 
 const Profile = () => {
-  const [privatePost, setPrivatePost] = useState(false);
-
   const { currentUser } = useContext(AuthContext);
 
   const userId = useLocation().pathname.split("/")[2];
@@ -212,23 +210,7 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className="archives">
-            <div className="type-post">
-              <p
-                className={privatePost ? "" : "active"}
-                onClick={() => setPrivatePost(false)}
-              >
-                Public
-              </p>
-              <p
-                className={privatePost ? "active" : ""}
-                onClick={() => setPrivatePost(true)}
-              >
-                Private
-              </p>
-            </div>
-            <Posts userId={userId} type={privatePost && "private"} />
-          </div>
+          <Posts userId={userId} />
         </div>
       )}
     </div>

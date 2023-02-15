@@ -9,14 +9,15 @@ import {
   MdOutlineBookmarkBorder,
   MdOutlineComment,
   MdComment,
+  MdOutlinePublic,
 } from "react-icons/md";
+import { HiLockClosed } from "react-icons/hi";
 import Zdj from "../../assets/tlo.jpg";
 import Zdj2 from "../../assets/tlo2.jpg";
 import Avatar from "../../assets/avatar.jpg";
 import Pl from "../../assets/pl.jpg";
 import En from "../../assets/en.jpg";
 import N from "../../assets/n.png";
-import padLock from "../../assets/padlock.png";
 import anonymous from "../../assets/anonymous.png";
 import Comments from "../comments/Comments";
 import Options from "../options/Options";
@@ -97,7 +98,14 @@ const Post = ({ post }) => {
               <p className="username">
                 <Link to={`/profile/${post.userId}`}>{post.name}</Link>
               </p>
-              <p className="timestamp">{moment(post.createdAt).fromNow()}</p>
+              <p className="timestamp">
+                {moment(post.createdAt).fromNow()}
+                {!!post.isPrivate ? (
+                  <HiLockClosed title="Private" />
+                ) : (
+                  <MdOutlinePublic title="Public" />
+                )}
+              </p>
             </div>
           </div>
           <Options postId={post.id} postUserId={post.userId} />
