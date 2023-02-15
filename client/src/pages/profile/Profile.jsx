@@ -16,10 +16,11 @@ import MoonLoader from "react-spinners/MoonLoader";
 
 const Profile = () => {
   const { currentUser } = useContext(AuthContext);
+  const queryClient = useQueryClient();
 
   const userId = useLocation().pathname.split("/")[2];
 
-  const { isLoading, error, data } = useQuery(["user"], () =>
+  const { isLoading, error, data } = useQuery(["user", userId], () =>
     makeRequest.get(`/users/find/${userId}`).then((res) => {
       return res.data;
     })
@@ -29,14 +30,14 @@ const Profile = () => {
     isLoading: pinIsLoading,
     error: pinError,
     data: pinData,
-  } = useQuery(["pins"], () =>
+  } = useQuery(["pins", userId], () =>
     makeRequest.get(`/pins/${userId}`).then((res) => {
       return res.data;
     })
   );
 
   const { isLoading: rIsLoading, data: relationshipData } = useQuery(
-    ["relationship"],
+    ["relationship", userId],
     () =>
       makeRequest.get(`/relationships?followedUserId=${userId}`).then((res) => {
         return res.data;
