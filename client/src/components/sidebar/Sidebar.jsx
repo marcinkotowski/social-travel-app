@@ -45,7 +45,7 @@ const Sidebar = () => {
               <span>Home</span>
             </div>
           </Link>
-          <Link to={"/"}>
+          <Link to={"/search"}>
             <div className="icon">
               <IoMdSearch />
               <span>Search</span>

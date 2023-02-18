@@ -14,11 +14,11 @@ import Explore from "./pages/explore/Explore.jsx";
 import Saved from "./pages/saved/Saved.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import Toggle from "./components/toggle/Toggle.jsx";
-// import Pin from "./pages/pin/Pin.jsx";
 import { React, useContext } from "react";
 import { DarkModeContext } from "./context/DarkModeContext.jsx";
 import { AuthContext } from "./context/authContext.jsx";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import Search from "./pages/search/Search.jsx";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
@@ -62,6 +62,10 @@ function App() {
         {
           path: "/",
           element: <Home />,
+        },
+        {
+          path: "/search",
+          element: <Search />,
         },
         {
           path: "/explore",

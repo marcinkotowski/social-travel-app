@@ -42,6 +42,8 @@ body {
     --visibilityButton: white;
     --borderOptionsColor: #e9e9e9;
     --borderHoverVisibilityColor: #e9e9e9;
+    --search: #e9e9e9;
+    --searchHover: #d1d1d1;
     background-color: var(--bg);
 
     transition: 200ms;
@@ -64,6 +66,8 @@ body {
     --visibilityButton: #22242c;
     --borderOptionsColor: #1b1d23;
     --borderHoverVisibilityColor: #1d1f26;
+    --search: #22242c;
+    --searchHover: #131519;
     background-color: var(--bg);
     transition: 200ms;
   }
