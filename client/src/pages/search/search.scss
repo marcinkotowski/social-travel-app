@@ -17,7 +17,6 @@
 
     .filter {
       border-radius: 20px;
-      border: 1px solid var(--borderOptionsColor);
 
       label {
         width: 100%;
@@ -25,42 +24,49 @@
         align-items: center;
         flex-direction: row;
         background-color: var(--search);
-        border-radius: 20px;
+        border-radius: inherit;
         cursor: default;
+        position: relative;
 
-        svg {
-          color: var(--textColor);
-          padding: 8px 15px;
+        .icon {
+          min-width: 2.8rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: inherit;
           font-size: 1.2rem;
-          min-width: 1.1rem;
+          color: var(--textColor);
+        }
+
+        .cancel {
+          position: absolute;
+          right: 0;
+          svg {
+            border-radius: 50%;
+            cursor: pointer;
+          }
         }
 
         input {
           width: 100%;
+          padding-right: 2.8rem;
           height: 2.2rem;
           font-size: 1rem;
           font-family: inherit;
           color: var(--textColor);
           border: none;
-          border-top-right-radius: 20px;
-          border-bottom-right-radius: 20px;
+          border-radius: inherit;
           background-color: var(--search);
           outline: none;
         }
       }
 
       label:hover {
-        background-color: var(--searchHover);
-        input {
-          background-color: var(--searchHover);
-        }
+        cursor: text;
       }
 
       label:focus-within {
-        background-color: var(--search);
-        input {
-          background-color: var(--search);
-        }
+        cursor: default;
       }
     }
   }

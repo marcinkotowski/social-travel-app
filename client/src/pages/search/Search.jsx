@@ -24,7 +24,9 @@ const Search = () => {
       <div className="search">
         <div className="filter">
           <label htmlFor="filter">
-            <IoMdSearch />
+            <div className="icon">
+              <IoMdSearch />
+            </div>
             <input
               type="text"
               id="filter"
@@ -33,7 +35,12 @@ const Search = () => {
               onChange={(e) => handleChange(e.target.value)}
               maxLength="50"
             />
-            {query && <MdCancel onClick={() => setQuery("")} />}
+
+            {query && (
+              <div className="icon cancel">
+                <MdCancel onClick={() => setQuery("")} />
+              </div>
+            )}
           </label>
         </div>
         <div className="results"></div>
