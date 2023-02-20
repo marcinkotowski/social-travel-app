@@ -113,8 +113,8 @@ const Post = ({ post }) => {
             <img
               crossOrigin="true"
               src={
-                post.country
-                  ? `https://countryflagsapi.com/png/${post.country?.toLowerCase()}`
+                post.countryCode
+                  ? `/src/assets/countries/flags/${post.countryCode?.toLowerCase()}.svg`
                   : anonymous
               }
               alt={post.country ? `${post.country} flag` : anonymous}
