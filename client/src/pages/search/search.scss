@@ -5,7 +5,8 @@
   flex-direction: column;
   align-items: flex-end;
   color: var(--textColor);
-  height: 100vh;
+  min-height: 100vh;
+  gap: 1rem;
 
   .search {
     width: 27.6rem;
@@ -17,6 +18,9 @@
 
     .filter {
       border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
 
       label {
         width: 100%;
@@ -67,6 +71,54 @@
 
       label:focus-within {
         cursor: default;
+      }
+    }
+
+    .type {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .category {
+      display: flex;
+      gap: 0.75rem;
+
+      button {
+        display: flex;
+        align-items: center;
+
+        svg {
+          min-width: fit-content;
+        }
+      }
+    }
+
+    .params {
+      button {
+        padding: 7px 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 20px;
+        cursor: pointer;
+        gap: 3px;
+        color: var(--textColor);
+        background-color: var(--search);
+        border: 1px solid var(--borderOptionsColor);
+        transition: 200ms;
+        white-space: nowrap;
+        text-transform: capitalize;
+      }
+
+      button:focus {
+        background-color: var(--bgLogo);
+        color: white;
+        border: 1px solid var(--borderHoverVisibilityColor);
+      }
+
+      .active {
+        background-color: var(--bgLogo);
+        color: white;
+        border: 1px solid var(--borderHoverVisibilityColor);
       }
     }
   }
