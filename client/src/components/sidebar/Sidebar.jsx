@@ -8,13 +8,14 @@ import {
   FaUserCircle,
   FaSearch,
 } from "react-icons/fa";
-import { RiCompass3Line, RiCompass3Fill } from "react-icons/ri";
+import { RiCompass3Fill } from "react-icons/ri";
 import {
   MdAddLocation,
   MdOutlineAddLocation,
   MdSearch,
   MdBookmark,
   MdOutlineBookmarkBorder,
+  MdNotificationsNone,
 } from "react-icons/md";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FiBookmark } from "react-icons/fi";
@@ -53,9 +54,9 @@ const Sidebar = () => {
           </Link>
           <Link to={"/"}>
             <div className="icon">
-              <RiCompass3Line />
+              <MdNotificationsNone />
               {/* <RiCompass3Fill /> */}
-              <span>Explore</span>
+              <span>Notification</span>
             </div>
           </Link>
           <Link to={"/saved"}>
