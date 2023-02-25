@@ -6,7 +6,7 @@ import debounce from "lodash/debounce";
 import { useSearchParams } from "react-router-dom";
 import Posts from "../../components/posts/Posts";
 import { AiFillFire, AiOutlineClockCircle } from "react-icons/ai";
-import { MdFavorite } from "react-icons/md";
+import { MdFavorite, MdNavigateNext } from "react-icons/md";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -105,6 +105,31 @@ const Search = () => {
             </div>
           )}
         </div>
+      </div>
+      <div className="result-container">
+        <div className="result">
+          <img
+            src="https://media.cnn.com/api/v1/images/stellar/prod/181018143148-krakow-2.jpg?q=w_1600,h_801,x_0,y_0,c_fill/w_1280"
+            alt=""
+          />
+          <p>Poland</p>
+          <div className="select">
+            <MdNavigateNext />
+          </div>
+        </div>
+        <div className="result">
+          <div className="rank"></div>
+          <img
+            src="https://www.state.gov/wp-content/uploads/2018/11/Norway-2560x1328.jpg"
+            alt=""
+          />
+          <p>Norway</p>
+          <div className="select">
+            <MdNavigateNext />
+          </div>
+        </div>
+        {/* <p>Trending</p> */}
+        {/* <Posts /> */}
       </div>
     </div>
   );
