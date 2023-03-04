@@ -13,6 +13,7 @@ import { makeRequest } from "../../axios.js";
 import { useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import MoonLoader from "react-spinners/MoonLoader";
+import Address from "../../components/address/Address";
 
 const Profile = () => {
   const { currentUser } = useContext(AuthContext);
@@ -103,43 +104,7 @@ const Profile = () => {
                   return (
                     <Marker position={[lat, lon]} icon={myIcon} key={key}>
                       <Popup>
-                        <p>
-                          {customDisplayName.detail ? (
-                            <>
-                              {customDisplayName.detail}
-                              <br />
-                              {customDisplayName.territory && (
-                                <span>
-                                  {customDisplayName.territory}
-                                  <br />
-                                </span>
-                              )}
-                              {customDisplayName.region && (
-                                <span>
-                                  {customDisplayName.region}
-                                  <br />
-                                </span>
-                              )}
-                            </>
-                          ) : customDisplayName.region ? (
-                            <>
-                              {customDisplayName.region && (
-                                <>
-                                  {customDisplayName.region}
-                                  <br />
-                                </>
-                              )}
-                              {customDisplayName.territory && (
-                                <span>
-                                  {customDisplayName.territory}
-                                  <br />
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <>{customDisplayName.territory}</>
-                          )}
-                        </p>
+                        <Address customDisplayName={customDisplayName} />
                       </Popup>
                     </Marker>
                   );

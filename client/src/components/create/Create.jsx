@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
+import Address from "../address/Address";
 
 const Create = () => {
   const [addLocation, setAddLocation] = useState(false);
@@ -199,8 +200,8 @@ const Create = () => {
     []
   );
 
-  const handleSelectedLocation = ({ customDisplayName, ...other }) => {
-    const { lat, lon, address } = other.other;
+  const handleSelectedLocation = (customDisplayName, other) => {
+    const { lat, lon, address } = other;
 
     setSelectedlocation({
       lat,
@@ -327,48 +328,11 @@ const Create = () => {
             <div className="search-result">
               {data &&
                 data.map(({ customDisplayName, ...other }) => (
-                  <p
-                    key={customDisplayName.key}
-                    onClick={() =>
-                      handleSelectedLocation({ customDisplayName, other })
-                    }
-                  >
-                    {customDisplayName.detail ? (
-                      <>
-                        {customDisplayName.detail}
-                        <br />
-                        {customDisplayName.territory && (
-                          <span>
-                            {customDisplayName.territory}
-                            <br />
-                          </span>
-                        )}
-                        {customDisplayName.region && (
-                          <span>
-                            {customDisplayName.region}
-                            <br />
-                          </span>
-                        )}
-                      </>
-                    ) : customDisplayName.region ? (
-                      <>
-                        {customDisplayName.region && (
-                          <>
-                            {customDisplayName.region}
-                            <br />
-                          </>
-                        )}
-                        {customDisplayName.territory && (
-                          <span>
-                            {customDisplayName.territory}
-                            <br />
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <>{customDisplayName.territory}</>
-                    )}
-                  </p>
+                  <Address
+                    customDisplayName={customDisplayName}
+                    other={other}
+                    handleSelectedLocation={handleSelectedLocation}
+                  />
                 ))}
             </div>
           )}
