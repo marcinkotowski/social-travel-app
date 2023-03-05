@@ -107,9 +107,7 @@ const Search = () => {
           )}
         </div>
       </div>
-      <div className="result-container">
-        <Results type={selectedType} category={selectedCategory} />
-      </div>
+      <Results type={selectedType} category={selectedCategory} />
     </div>
   );
 };

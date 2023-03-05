@@ -122,21 +122,15 @@
       }
     }
   }
-
-  .result-container {
-    padding: 1.2rem;
-    width: 27.6rem;
-    height: fit-content;
-    border-radius: 10px;
-    border: 1px solid var(--bgRightbar);
-    background-color: var(--postColor);
-  }
 }
 
 @media (max-width: 80rem), (max-height: 32rem) {
-  .search {
+  .search-container {
     margin-left: 0;
     align-items: center;
     margin-bottom: 4rem;
+
+    .search {
+    }
   }
 }
