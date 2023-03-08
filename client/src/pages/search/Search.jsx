@@ -8,6 +8,7 @@ import Posts from "../../components/posts/Posts";
 import { AiFillFire, AiOutlineClockCircle } from "react-icons/ai";
 import { MdFavorite } from "react-icons/md";
 import Results from "../../components/results/Results";
+import { makeRequest } from "../../axios";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -33,8 +34,18 @@ const Search = () => {
   const handleFilter = useCallback(
     debounce((value) => {
       if (value.length > 0) {
-        console.log("fetch: " + value);
-        /* Fetch */
+        // const getProfile = async () => {
+        //   try {
+        //     const res = await makeRequest.get(`/search/profile`);
+        //     console.log(res);
+        //   } catch (err) {
+        //     console.error(err);
+        //   }
+        // };
+        // getProfile();
+        makeRequest.get(`/search/profile`).then((res) => {
+          console.log(res.data);
+        });
       }
     }, 1500),
     []
