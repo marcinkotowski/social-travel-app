@@ -3,12 +3,12 @@ import "./results.scss";
 import CountryResult from "./country/CountryResult";
 import ProfileResult from "./profile/ProfileResult";
 
-const Results = ({ type, category }) => {
+const Results = ({ category }) => {
   return (
     <div className="results">
-      {type === "location" ? (
+      {category === "location" ? (
         <CountryResult />
-      ) : type === "profile" ? (
+      ) : category === "profile" ? (
         <ProfileResult />
       ) : (
         ""
