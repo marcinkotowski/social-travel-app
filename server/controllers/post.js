@@ -5,9 +5,6 @@ import moment from "moment";
 export const getPosts = (req, res) => {
   const userId = req.params.userId;
   const saved = req.query.type === "saved" ? true : undefined;
-  const query = req.query.q === "q" ? true : undefined;
-  const category =
-    req.query.category === "category" ? req.query.category : undefined;
 
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Logged in to see posts");
@@ -15,25 +12,30 @@ export const getPosts = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is no valid");
 
-    let q =
-      "SELECT posts.*, countryCode, u.id AS userId, name, profilePic FROM posts JOIN users AS u ON (u.id = posts.userId) LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id)";
+    let q = `SELECT posts.*, countryCode, customDisplayName, u.id AS userId, name, profilePic 
+             FROM posts 
+             JOIN users AS u ON (u.id = posts.userId) 
+             LEFT JOIN pins ON (pins.userId = u.id AND pins.postId = posts.id)`;
     let values = [];
 
     if (saved) {
-      q +=
-        "JOIN saved ON (saved.postId = posts.id AND saved.userId = ?) WHERE (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?)) ORDER BY posts.createdAt DESC";
+      q += `JOIN saved ON (saved.postId = posts.id AND saved.userId = ?) 
+            WHERE (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?)) 
+            ORDER BY posts.createdAt DESC`;
       values = [userInfo.id, userInfo.id];
     } else if (userId) {
       if (userId == userInfo.id) {
-        q += "WHERE posts.userId = ? ORDER BY posts.createdAt DESC";
+        q += `WHERE posts.userId = ? 
+              ORDER BY posts.createdAt DESC`;
       } else {
-        q +=
-          "WHERE (posts.userId = ? AND posts.isPrivate = 0) ORDER BY posts.createdAt DESC";
+        q += `WHERE (posts.userId = ? AND posts.isPrivate = 0) 
+              ORDER BY posts.createdAt DESC`;
       }
       values = [userId];
     } else {
-      q +=
-        "LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?))) ORDER BY posts.createdAt DESC";
+      q += `LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) 
+            WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?))) 
+            ORDER BY posts.createdAt DESC`;
       values = [userInfo.id, userInfo.id, userInfo.id];
     }
 

@@ -117,8 +117,12 @@ const Post = ({ post }) => {
                   ? `/src/assets/countries/flags/${post.countryCode?.toLowerCase()}.svg`
                   : anonymous
               }
-              alt={post.country ? `${post.country} flag` : anonymous}
-              title={post.country ? `${post.country}` : "Anonymous location"}
+              alt={post.countryCode ? `${post.countryCode} flag` : anonymous}
+              title={
+                post.customDisplayName
+                  ? Object.values(JSON.parse(post.customDisplayName)).join("\n")
+                  : "Anonymous location"
+              }
             />
           </div>
         </div>
