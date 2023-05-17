@@ -34,10 +34,12 @@ export const getPosts = (req, res) => {
       values = [userId];
     } else {
       q += `LEFT JOIN relationships AS r ON (posts.userId = r.followedUserId) 
-            WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?))) 
+            WHERE ((posts.isPrivate = 0 AND (r.followerUserId = ? OR posts.userId = ?) OR (posts.isPrivate = 1 AND posts.userId = ?)))
             ORDER BY posts.createdAt DESC`;
       values = [userInfo.id, userInfo.id, userInfo.id];
     }
+
+    // WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?))
 
     db.query(q, values, (err, data) => {
       if (err) return res.status(500).json(err);
