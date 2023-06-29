@@ -13,7 +13,11 @@ export const getPins = (req, res) => {
     const q =
       userId == userInfo.id
         ? "SELECT * FROM pins WHERE userId = ?"
-        : "SELECT pins.*, posts.isPrivate FROM pins LEFT JOIN posts ON (pins.id = posts.pinId) WHERE pins.userId = ? AND posts.isPrivate = 0";
+        : `SELECT pins.* 
+           FROM pins 
+           LEFT JOIN users ON (pins.userId = users.id) 
+           LEFT JOIN posts ON (pins.postId = posts.id) 
+           WHERE pins.userId = ? AND posts.isPrivate = 0`;
 
     db.query(q, [userId], (err, data) => {
       if (err) return res.status(500).json(err);

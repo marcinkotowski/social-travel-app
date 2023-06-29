@@ -39,8 +39,6 @@ export const getPosts = (req, res) => {
       values = [userInfo.id, userInfo.id, userInfo.id];
     }
 
-    // WHERE ((r.followerUserId = ? OR posts.userId = ?) AND (posts.isPrivate = 0 OR (posts.isPrivate = 1 AND posts.userId = ?))
-
     db.query(q, values, (err, data) => {
       if (err) return res.status(500).json(err);
       return res.status(200).json(data);
@@ -109,14 +107,7 @@ export const addPost = (req, res) => {
 
       db.query(queryPin, [valuesPin], (err, dataPin) => {
         if (err) return res.status(500).json(err);
-
-        const pinId = dataPin.insertId;
-        const queryUpdatePinId = "UPDATE posts SET pinId = (?) WHERE id = (?)";
-
-        db.query(queryUpdatePinId, [pinId, postId], (err, updateDataPost) => {
-          if (err) return res.status(500).json(err);
-          return res.status(200).json("Post with location has been created");
-        });
+        return res.status(200).json("Post with location has been created");
       });
     });
   });
