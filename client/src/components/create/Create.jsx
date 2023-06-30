@@ -24,13 +24,14 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
 import Address from "../address/Address";
+import { searchLocations } from "../../utils/searchLocations";
 
 const Create = () => {
   const [addLocation, setAddLocation] = useState(false);
   const [query, setQuery] = useState("");
   const [searchingDebounce, setSearchingDebounce] = useState(false);
   const [data, setData] = useState("");
-  const [selectedlocation, setSelectedlocation] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [anonymousLocation, setAnonymousLocation] = useState(false);
   const [file, setFile] = useState(null);
   const [visibilityOpen, setVisibilityOpen] = useState(false);
@@ -78,7 +79,7 @@ const Create = () => {
   };
 
   const handleChange = (e) => {
-    setSelectedlocation("");
+    setSelectedLocation("");
     setData("");
     setSearchingDebounce(false);
 
@@ -92,14 +93,14 @@ const Create = () => {
     try {
       let imgUrl = "";
       if (file) imgUrl = await upload();
-      mutation.mutate({ desc, img: imgUrl, selectedlocation, isPrivate });
+      mutation.mutate({ desc, img: imgUrl, selectedLocation, isPrivate });
       reset({
         desc: "",
       });
       setFile(null);
       setQuery("");
       setData("");
-      setSelectedlocation("");
+      setSelectedLocation("");
       setAnonymousLocation(false);
       setAddLocation(false);
     } catch (err) {
@@ -108,82 +109,14 @@ const Create = () => {
   };
 
   const handleSearch = useCallback(
-    debounce((query) => {
+    debounce(async (query) => {
       if (query.length > 0) {
-        axios
-          .get(
-            `https://nominatim.openstreetmap.org/search?q=${query}&addressdetails=1&format=json&limit=6&accept-language=en-US`
-            // accept-language=pl
-          )
-          .then((res) => {
-            res = res.data;
-
-            /* Remove redundant properties */
-            res = res.map(({ lat, lon, display_name, address }) => {
-              const {
-                amenity,
-                building,
-                road,
-                house_number,
-                postcode,
-                city,
-                town,
-                administrative,
-                natural,
-                place,
-                village,
-                hamlet,
-                county,
-                state,
-                country,
-              } = address;
-
-              let detail = [];
-              let region = [];
-              let territory = [];
-
-              detail.push(amenity, building, road, house_number);
-              region.push(
-                postcode,
-                city,
-                town,
-                administrative,
-                natural,
-                place,
-                village,
-                hamlet
-              );
-              territory.push(county, state, country);
-
-              detail = detail.filter((element) => element !== undefined);
-              region = region.filter((element) => element !== undefined);
-              territory = territory.filter((element) => element !== undefined);
-
-              detail = detail.join(" ");
-              region = region.join(" ");
-              territory = territory.join(" ");
-
-              const customDisplayName = {
-                detail,
-                region,
-                territory,
-              };
-
-              return { lat, lon, display_name, address, customDisplayName };
-            });
-
-            /* Remove all duplicates from an array of response */
-            res = res.filter(
-              (curr, index, self) =>
-                index ===
-                self.findIndex(
-                  (location) => location.display_name === curr.display_name
-                )
-            );
-
-            setData(res);
-            console.log(res);
-          });
+        try {
+          const data = await searchLocations(query);
+          setData(data);
+        } catch (err) {
+          console.error(err);
+        }
       }
 
       setSearchingDebounce(false);
@@ -203,7 +136,7 @@ const Create = () => {
   const handleSelectedLocation = (customDisplayName, other) => {
     const { lat, lon, address } = other;
 
-    setSelectedlocation({
+    setSelectedLocation({
       lat,
       lon,
       customDisplayName,
@@ -269,7 +202,7 @@ const Create = () => {
                   <p>Anonymous location</p>
                 ) : (
                   <TextareaAutosize
-                    className={!selectedlocation && "border"}
+                    className={!selectedLocation ? "border" : ""}
                     type="text"
                     placeholder="Search location..."
                     value={query}
@@ -292,7 +225,7 @@ const Create = () => {
                         speedMultiplier={0.7}
                         size={15}
                       />
-                      {selectedlocation && (
+                      {selectedLocation && (
                         <>
                           <p>See on map</p>
                           <MdOpenInNew />
@@ -324,11 +257,12 @@ const Create = () => {
               </p>
             )}
           </div>
-          {data && !selectedlocation && (
+          {data && !selectedLocation && (
             <div className="search-result">
               {data &&
-                data.map(({ customDisplayName, ...other }) => (
+                data.map(({ customDisplayName, ...other }, key) => (
                   <Address
+                    key={key}
                     customDisplayName={customDisplayName}
                     other={other}
                     handleSelectedLocation={handleSelectedLocation}
