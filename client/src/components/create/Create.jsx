@@ -146,9 +146,9 @@ const Create = () => {
     const { detail, region, territory } = customDisplayName;
 
     if (detail) {
-      setQuery(`${detail}\n${region}\n${territory}`);
+      setQuery(`${detail} \n${region} \n${territory}`);
     } else if (region) {
-      setQuery(`${region}\n${territory}`);
+      setQuery(`${region} \n${territory}`);
     } else {
       setQuery(territory);
     }

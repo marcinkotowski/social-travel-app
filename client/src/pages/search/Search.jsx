@@ -1,55 +1,92 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./search.scss";
 import { IoMdSearch } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 import debounce from "lodash/debounce";
 import { useSearchParams } from "react-router-dom";
-import Posts from "../../components/posts/Posts";
-import { MdFavorite } from "react-icons/md";
 import Results from "../../components/results/Results";
 import { makeRequest } from "../../axios";
+import { searchLocations } from "../../utils/searchLocations";
+import Address from "../../components/address/Address";
+import TextareaAutosize from "react-textarea-autosize";
 
 const Search = () => {
-  const [searchParams, setSearchParams] = useSearchParams({});
-  const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || "location"
-  );
-  const [query, setQuery] = useState(searchParams.get("q") || "");
+  const [query, setQuery] = useState("");
+  const [type, setType] = useState("location");
+  const [searchingDebounce, setSearchingDebounce] = useState(false);
+  const [data, setData] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
 
-  const category = ["location", "profile"];
+  const typeArray = ["location", "profile"];
 
-  const handleFilter = useCallback(
-    debounce((value) => {
-      if (value.length > 0) {
-        // const getProfile = async () => {
-        //   try {
-        //     const res = await makeRequest.get(`/search/profile`);
-        //     console.log(res);
-        //   } catch (err) {
-        //     console.error(err);
-        //   }
-        // };
-        // getProfile();
-        makeRequest.get(`/search/profile`).then((res) => {
-          console.log(res.data);
-        });
+  const handleSearch = useCallback(
+    debounce(async (query, type, selectedLocation) => {
+      if (query.length > 0) {
+        try {
+          if (type === typeArray[0]) {
+            if (selectedLocation) {
+              const { lat, lon } = selectedLocation;
+              const response = await makeRequest.get(
+                `/search?lat=${lat}&lon=${lon}`
+              );
+              console.log(response.data);
+            } else {
+              const data = await searchLocations(query);
+              setData(data);
+            }
+          } else if (type === typeArray[1]) {
+            const response = await makeRequest.get(`/search?query=${query}`);
+            console.log(response.data);
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
+
+      setSearchingDebounce(false);
     }, 1500),
     []
   );
 
-  const handleChange = (value) => {
-    setQuery(value);
-    handleFilter(value);
-    if (value.length > 0) {
-      setSearchParams({
-        q: value,
-        category: selectedCategory,
-      });
+  const handleSearching = useCallback(
+    debounce((query) => {
+      if (query.length > 0) {
+        setSearchingDebounce(true);
+      }
+    }, 500),
+    []
+  );
+
+  const handleSelectedLocation = (customDisplayName, other) => {
+    const { lat, lon } = other;
+    const { detail, region, territory } = customDisplayName;
+
+    setSelectedLocation({
+      lat,
+      lon,
+    });
+
+    let customQuery;
+    if (detail) {
+      customQuery = `${detail} \n${region} \n${territory}`;
+    } else if (region) {
+      customQuery = `${region} \n${territory}`;
     } else {
-      setSearchParams({});
+      customQuery = territory;
     }
+
+    setQuery(customQuery);
   };
+
+  useEffect(() => {
+    if (selectedLocation || query.length == 0) {
+      setSelectedLocation("");
+      setData("");
+    }
+    setSearchingDebounce(false);
+    handleSearching(query);
+    handleSearch(query, type, selectedLocation);
+  }, [query]);
 
   return (
     <div className="search-container">
@@ -59,27 +96,43 @@ const Search = () => {
             <div className="icon">
               <IoMdSearch />
             </div>
-            <input
+            <TextareaAutosize
+              className={!selectedLocation ? "border" : ""}
               type="text"
-              id="filter"
-              placeholder="Search"
+              placeholder={"Search"}
               value={query}
-              onChange={(e) => handleChange(e.target.value)}
-              maxLength="50"
+              onChange={(e) => setQuery(e.target.value)}
             />
             {query && (
               <div className="icon cancel">
-                <MdCancel onClick={() => handleChange("")} />
+                <MdCancel
+                  onClick={() => {
+                    setQuery("");
+                  }}
+                />
               </div>
             )}
           </label>
+          {type === "location" && data && !selectedLocation && (
+            <div className="search-result">
+              {data.map(({ customDisplayName, ...other }, key) => (
+                <Address
+                  key={key}
+                  customDisplayName={customDisplayName}
+                  other={other}
+                  handleSelectedLocation={handleSelectedLocation}
+                />
+              ))}
+            </div>
+          )}
           <div className="category params">
-            {category.map((name) => (
+            {typeArray.map((name) => (
               <button
                 onClick={() => {
-                  setSelectedCategory(name);
+                  setType(name);
                 }}
-                className={name === selectedCategory ? "active" : ""}
+                className={name === type ? "active" : ""}
+                key={name}
               >
                 {name}
               </button>
@@ -87,7 +140,7 @@ const Search = () => {
           </div>
         </div>
       </div>
-      <Results category={selectedCategory} />
+      <Results type={type} />
     </div>
   );
 };

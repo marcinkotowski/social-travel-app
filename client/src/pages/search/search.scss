@@ -24,6 +24,8 @@
 
       label {
         width: 100%;
+        min-height: 2.2rem;
+        height: 100%;
         display: flex;
         align-items: center;
         flex-direction: row;
@@ -51,17 +53,23 @@
           }
         }
 
-        input {
+        textarea {
           width: 100%;
-          padding-right: 2.8rem;
-          height: 2.2rem;
-          font-size: 1rem;
-          font-family: inherit;
-          color: var(--textColor);
+          resize: none;
           border: none;
-          border-radius: inherit;
-          background-color: var(--search);
+          background-color: transparent;
+          font-family: inherit;
           outline: none;
+          font-size: 0.9rem;
+          color: #919191;
+          padding: 0.5rem 0;
+        }
+        textarea::first-line {
+          color: var(--textColor);
+          font-size: 1rem;
+        }
+        textarea::-webkit-scrollbar {
+          display: none;
         }
       }
 
@@ -71,6 +79,28 @@
 
       label:focus-within {
         cursor: default;
+      }
+
+      .search-result {
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+        p {
+          margin: 0 1.5rem;
+          font-size: 0.9rem;
+
+          span {
+            color: #919191;
+          }
+        }
+
+        p:hover {
+          color: var(--primaryColor);
+          cursor: pointer;
+          span {
+            color: var(--primaryColor);
+          }
+        }
       }
     }
 
