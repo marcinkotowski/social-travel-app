@@ -120,7 +120,9 @@ const Post = ({ post }) => {
               alt={post.countryCode ? `${post.countryCode} flag` : anonymous}
               title={
                 post.customDisplayName
-                  ? Object.values(JSON.parse(post.customDisplayName)).join("\n")
+                  ? Object.values(JSON.parse(post.customDisplayName))
+                      .reverse()
+                      .join("\n")
                   : "Anonymous location"
               }
             />

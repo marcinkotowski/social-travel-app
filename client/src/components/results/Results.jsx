@@ -1,15 +1,15 @@
 import React from "react";
 import "./results.scss";
-import ProfileResult from "./profile/ProfileResult";
-import Posts from "../posts/Posts";
+import ProfileResults from "./profile/ProfileResults";
+import PostResults from "./post/PostResults";
 
-const Results = ({ type }) => {
+const Results = ({ type, results }) => {
   return (
     <div className="results">
       {type === "location" ? (
-        <Posts />
+        <PostResults posts={results} />
       ) : type === "profile" ? (
-        <ProfileResult />
+        <ProfileResults users={results} />
       ) : (
         ""
       )}

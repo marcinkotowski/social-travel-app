@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import { makeRequest } from "../../axios.js";
 import MoonLoader from "react-spinners/MoonLoader";
 
-const Posts = ({ userId, type }) => {
+const Posts = ({ userId, type, posts }) => {
   const { isLoading, error, data } = useQuery(["posts", userId, type], () => {
     if (userId) {
       return makeRequest.get(`/posts/${userId}`).then((res) => {

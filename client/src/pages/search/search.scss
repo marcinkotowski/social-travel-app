@@ -81,7 +81,7 @@
         cursor: default;
       }
 
-      .search-result {
+      .location-result {
         display: flex;
         gap: 1rem;
         flex-direction: column;
@@ -138,10 +138,19 @@
       }
     }
   }
+  .results-container {
+    width: 30rem;
+    border: 1px solid transparent;
+  }
 }
 
 @media (max-width: 80rem), (max-height: 32rem) {
   .search-container {
+    margin-left: 0;
+    align-items: center;
+    margin-bottom: 4rem;
+  }
+  .results-container {
     margin-left: 0;
     align-items: center;
     margin-bottom: 4rem;
